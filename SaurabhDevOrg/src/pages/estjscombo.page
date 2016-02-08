@@ -1,0 +1,204 @@
+<apex:page controller="estjsstudentcontroller" showHeader="false">
+
+<apex:includeScript value="{!URLFOR($Resource.ext,'/ext-4.2.1.883/examples/shared/include-ext.js')}"/>
+ <img src='http://www.pcquest.com/IMG/009/79009/cybage.png' alt='Smiley face' width='300' height='100'/>
+<script type="text/javascript">
+    //alert("in");
+Ext.require([
+    'Ext.form.*',
+    'Ext.tip.QuickTipManager',
+    'Ext.data.*',
+    'Ext.grid.*'
+]);
+ //alert("in");
+Ext.ns("Ext.company");
+
+Ext.onReady(function(){
+
+//alert("inside");
+var searchobj =  new Ext.create('Ext.form.Panel',{
+
+title : 'search name in salesforce',
+width  : 600,
+height : 150,
+renderTo : 'combobox',
+fieldDefaults: {
+       labelWidth: 55
+        },
+items :[
+               {
+               xtype : 'textfield',
+               name  : 'name',
+               fieldLabel : 'Search',
+               allowBlank : false,
+               width     : 450,
+               anchor    : '80%'
+              
+
+                },{
+                },
+                
+                {
+                
+                
+                 
+                width:          480,
+
+                xtype:          'combo',
+                mode:           'local',
+                value:          'account',
+                multiSelect:     true,
+                triggerAction:  'all',
+                forceSelection:  true,
+                editable:        false,
+                fieldLabel:     'Objects',
+                name:           'object1',
+                displayField:   'name',
+                valueField:     'value',
+                queryMode:       'local',
+                store:              Ext.create('Ext.data.Store', {
+                                    fields : ['name', 'value'],
+                                    data   : [
+                                        {name : 'Account',   value: 'Account'},
+                                        {name : 'Contact',    value: 'Contact'},
+                                        {name : 'Opportunity', value: 'Opportunity'},
+                                        {name : 'User' ,       value :'User'},
+                                        {name : 'Student' ,     value :'student__c'},
+                                        {name : 'Merchandise',  value :'Merchandise__c'}
+                                              ]
+                                                                    })
+                  }
+
+
+    ],
+    
+    buttons :[
+    {
+   
+    text : 'search',
+    handler: function(){
+    
+                       document.getElementById('searchdata').innerHTML = '';
+                         
+					     var text1 = searchobj.getForm().findField("name").getValue();
+					     var objectname = searchobj.getForm().findField("object1").getValue();
+					    // alert(objectname);
+					    // alert(text1);
+					     estjsstudentcontroller.searchText(text1,objectname,function(result,er)
+			                    {
+			                    
+			                              //alert(result);
+			                               
+			                              var res = Ext.decode(result);
+			                              for( i =0; i<res.length; i++)
+			                              {
+			                              if(res.Records[i].length > 0)
+			                              {
+			                              var storeobject = new Ext.create('SearchStore',{
+			                             			                             });
+			                              title2= res.Records[i][0].attributes.type+'('+res.Records[i].length+')';
+			                              var searchPanelObject = new Ext.create('Ext.company.SearchPanel',{
+									                                            renderTo : 'searchdata',
+									                                            title    :  title2,
+									                                            store       : storeobject,
+									                                            
+									    
+									                                                });
+			                             storeobject.loadData(res.Records[i]);
+			                             }
+			                             }
+			                      },{escape:false});
+			                         //alert(title2);
+			                         
+                         
+                         
+                             }
+    }
+    
+    ]
+    
+   
+
+
+
+
+});
+
+});
+
+
+    Ext.define('SearchModel', {
+          extend: 'Ext.data.Model',
+          fields: [
+            {name: 'Name',     type: 'string'},
+            {name: 'Id',      type: 'string'},
+            
+        ]
+    });
+
+         Ext.define('SearchStore',{
+            extend : 'Ext.data.Store',
+            model : 'SearchModel',
+            proxy : {
+            type : 'memory',
+            reader:   {
+                        type : 'json',
+            
+                      }
+                      }
+
+})
+
+ //alert("ingyrfh");
+ 
+ 
+ 
+ Ext.define('Ext.company.SearchPanel',{
+             
+             extend : 'Ext.grid.Panel',
+             name  :   'SearchPanel',
+             alias       : 'widget.SearchPanel',
+             
+ 
+            columnLines : true,
+            autoScroll  : true,
+            singleSelect: true,
+            border      : true,
+            height      : 200,
+            width       : 600,
+                                     //Associate with our store
+            
+            
+            
+            columns     : [ //Define the required columns
+                              { header      :'Searchid',
+                                text        : 'searchId',
+                                dataIndex   : 'Id',
+                                flex        : 1
+                                 
+                                
+                                
+                            },
+                           {
+                                header  : 'Name',                           
+                                text        : 'Name',
+                                dataIndex   : 'Name',
+                                flex        : 0.5
+                            }
+                           
+                        ],
+   
+   });
+
+
+
+</script>
+    
+    
+    <center>
+
+<div id='combobox'></div><br/><br/><br/><br/><br/><br/>
+<div id= 'title1'></div>
+<div id ='searchdata'> </div></center>
+
+</apex:page>

@@ -1,0 +1,64 @@
+<apex:page showHeader="false" sidebar="false" controller="CsvGenratorController" standardStylesheets="false"  contentType="text/html" >
+<style type="text/css">
+    .empty-column-content {
+        display: none;
+    }
+</style>
+<script>
+function goToAnotherPage()
+{
+   
+}
+</script>
+<apex:form >
+
+<apex:pageBlock >
+<apex:actionFunction name="getfields" action="{!getAllfields}" />
+<apex:pageBlockSection >
+<apex:outputLabel value="select sobject" ></apex:outputLabel> &nbsp; &nbsp;
+<apex:selectList value="{!selectedsobj}"  size="1"  onchange="getfields()" >
+<apex:selectOptions value="{!allobj}"></apex:selectOptions>
+</apex:selectList>
+</apex:pageBlockSection>
+
+<apex:pageBlockSection id="field" rendered="{!showselectfield}">
+<apex:outputLabel value="select fields" ></apex:outputLabel>
+<apex:selectList value="{!selectedfields}" multiselect="true"  size="5" title="fields" >
+<apex:selectOptions value="{!allfields}"></apex:selectOptions>
+</apex:selectList>
+<apex:commandButton action="{!getRecords}" value="click" />
+</apex:pageBlockSection>
+
+
+</apex:pageBlock>
+
+<apex:pageBlock id="records"  rendered="{!showrecords}">
+
+<apex:pageblockSection >
+<apex:pageBlockTable value="{!allrecords}" var="onerecord" border="3"  styleClass="tableClass"  >
+
+<apex:repeat value="{!onerecord.fields}" var="rec">
+
+<apex:column width="100" value="{!rec.value}"  headerValue="{!rec.name}">
+<apex:facet name="header">{!rec.name}</apex:facet>
+
+</apex:column>
+</apex:repeat>
+<apex:repeat value="{!onerecord.fields}" var="rec">
+
+<apex:column width="100" value="{!rec.value}"  headerValue="{!rec.name}">
+<apex:facet name="header">{!rec.name}</apex:facet>
+
+</apex:column>
+</apex:repeat>
+
+</apex:pageBlockTable>
+&nbsp; &nbsp;
+<apex:commandButton value="Generate csv" action="{!getCsv}"/>
+</apex:pageblockSection>
+</apex:pageBlock>
+
+</apex:form>
+
+  
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:page controller="TestInsertController" >
+
+ <apex:detail subject="{!detailObj}"/>
+<apex:outputText value="this is out put text mr saurabh" label="my output label"></apex:outputText>
+
+
+<apex:insert name="skdef"/> 
+<apex:outputText >hi all</apex:outputText>
+ 
+
+</apex:page>

@@ -1,0 +1,105 @@
+<apex:page standardStylesheets="false" docType="html-5.0" >
+<html xmlns:ng ="http://angularjs.org" ng-app ="ModalOperation" lang = "en">
+
+<!--including angularjs library in visualforcepage-->
+     <head>
+        <meta charset="utf-8"/>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet"/>
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"/>
+        <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"/>
+        <apex:includeScript value="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"/>
+        <apex:includeScript value="{!$Resource.NgDialog}"/>
+        
+
+             <script type="text/javascript">
+             var myapp = angular.module('ModalOperation', ['ui.bootstrap']);
+              myapp.controller('ModalDemoCtrl',['$scope', '$modal', '$log', function ($scope, $modal, $log) {
+                                                                
+                                                                  $scope.items = ['item1', 'item2', 'item3'];
+                                                                
+                                                                  $scope.open = function (size) {
+                                                                
+                                                                   var modalInstance = $modal.open({
+                                                                    template: '<div class="modal"><div class="modal-header">'+
+																        '<h3 class="modal-title">I m a modal!</h3>'+
+																        '</div>'+
+																        '<div class="modal-body">'+
+																        '<ul>'+
+																            '<li ng-repeat="item in items">'+
+																                '<a ng-click="selected.item = item">{{ item }}</a>'+
+																            '</li>'+
+																       ' </ul>'+
+																        'Selected: <b>{{ selected.item }}</b>'+
+																        '</div>'+
+																        '<div class="modal-footer">'+
+																        '<button class="btn btn-primary" ng-click="ok()">OK</button>'+
+																        '<button class="btn btn-warning" ng-click="cancel()">Cancel</button>'+
+																        '</div> </div>',                                                 
+                                                                     controller: 'ModalInstanceCtrl',
+                                                                     size: size,
+                                                                     resolve: {
+                                                                        items: function () {
+                                                                          return $scope.items;
+                                                                        }
+                                                                      }
+                                                                    });
+                                                                
+                                                                    modalInstance.result.then(function (selectedItem) {
+                                                                      $scope.selected = selectedItem;
+                                                                    }, function () {
+                                                                      $log.info('Modal dismissed at: ' + new Date());
+                                                                    });
+                                                                  };
+                                                                }]);
+     
+     
+myapp.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'items',function ($scope, $modalInstance, items) {
+
+                                                                              $scope.items = items;
+                                                                              $scope.selected = {
+                                                                                item: $scope.items[0]
+                                                                              };
+                                                                            
+                                                                              $scope.ok = function () {
+                                                                                $modalInstance.close($scope.selected.item);
+                                                                              };
+                                                                            
+                                                                              $scope.cancel = function () {
+                                                                                $modalInstance.dismiss('cancel');
+                                                                              };
+                                                                            }]);
+             
+             </script>
+                
+        
+     </head>
+     <body >
+
+       <div ng-controller="ModalDemoCtrl" >
+     <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal"><div class="modal-header">
+        <h3 class="modal-title">I m a modal!</h3>
+        </div>
+        <div class="modal-body">
+        <ul>
+            <li ng-repeat="item in items">
+                <a ng-click="selected.item = item">{{ item }}</a>
+            </li>
+        </ul>
+        Selected: <b>{{ selected.item }}</b>
+        </div>
+        <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div> </div>
+                                                                                 
+    </script>
+
+    <button class="btn btn-default" ng-click="open()">Open me!</button>
+    <button class="btn btn-default" ng-click="open('lg')">Large modal</button>
+    <button class="btn btn-default" ng-click="open('sm')">Small modal</button>
+    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
+  </div>
+  </body>
+  </html>
+</apex:page>

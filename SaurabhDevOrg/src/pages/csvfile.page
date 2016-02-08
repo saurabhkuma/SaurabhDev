@@ -1,0 +1,18 @@
+<apex:page showHeader="false" sidebar="false" controller="CsvGenratorController" contentType="{!contentType}">
+<apex:form >
+<center><apex:outputLabel value="{!selectedsobj}"></apex:outputLabel> </center>
+<apex:dataTable value="{!allrecords}" var="onerecord"  bgcolor="white" border="3" title="records"  styleClass="tableClass">
+
+<apex:repeat value="{!onerecord.fields}" var="rec">
+
+<apex:column width="100" headerValue="{!rec.name}">
+
+<apex:outputText value="{!rec.value}"/>
+
+</apex:column>
+
+</apex:repeat>
+</apex:dataTable>
+</apex:form>
+  
+</apex:page>

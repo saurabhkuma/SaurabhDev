@@ -1,0 +1,329 @@
+<apex:page controller="estjsstudentcontroller">
+  <apex:includeScript value="{!URLFOR($Resource.ext,'/ext-4.2.1.883/examples/shared/include-ext.js')}"/>
+<center>
+    <apex:form >
+    
+    <div id="stud">
+        
+        </div>
+        
+    </apex:form>
+  </center>
+    <script type="text/javascript">
+    Ext.require([ 'Ext.form.*',
+'Ext.grid.*',
+'Ext.data.*'
+]);
+   
+      Ext.ns("Ext.student"); //here namespace for all class created in this file is created
+      var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
+    Ext.onReady(function(){
+    
+      
+                                                                                                      //form object created
+        var studform1= new Ext.create('Ext.student.studForm',{
+        renderTo : stud,
+        title : 'student form',
+        xtype: 'form',
+        layout: 'form',
+        collapsible: true,
+        id: 'simpleForm',
+        bodyPadding: '2 2 0',
+         width: 550,
+         fieldDefaults: {
+            msgTarget: 'side',
+            labelWidth: 75
+        },
+        buttons: [{
+               text: 'Save',
+                handler: function() {
+                    
+                     alert("hi");
+                     var name1 = studform1.getForm().findField('name__c').getValue();
+                     var city1 = studform1.getForm().findField('city__c').getValue();
+                       alert(name1);
+                     var date1 =   studform1.getForm().findField('admission_date__c').getValue();
+                     var date4=    DateUtil.getDateStringFromUserLocale(date1);
+                     alert(name1);
+                     
+                      var form   = studform1.getForm();
+                      encode = Ext.String.htmlEncode;
+                     var s= '';
+                     
+                     if (form.isValid()) {
+                     alert("in");
+                        Ext.iterate(form.getValues(), function(key, value) {
+                        alert("in1");
+                            value = encode(value);
+                            
+                            s += Ext.util.Format.format("{0} = {1}<br />", key, value);
+                        }, this);
+
+                       
+                    }
+                        document.getElementById('studsave').innerHTML= s;
+                        alert(form);
+                 
+               
+                     
+                
+                      estjsstudentcontroller.savestudent(name1,city1,date4,function(result, er){ //This method is used to call our controller method
+                                                       
+                                    }, {escape:false});
+                
+                
+                
+                
+                
+            }
+        },{
+            text: 'Cancel',
+            handler: function() {
+            this.up('form').getForm().reset();
+              document.getElementById('studsave').innerHTML= '';  
+              document.getElementById('studgrid').innerHTML= '';
+            }
+        },
+        
+        {
+        text: 'update',
+        handler: function()
+        {
+                      
+                     var name2 = studform1.getForm().findField('name__c').getValue();
+                     var city2 =   studform1.getForm().findField('city__c').getValue();
+                     var id2 =     studform1.getForm().findField('Id').getValue();
+                     var date2 =   studform1.getForm().findField('admission_date__c').getValue();
+                     var date3=     DateUtil.getDateStringFromUserLocale(date2);
+                     alert(date2.toString());
+                     alert(date3);
+                     estjsstudentcontroller.updatestudent(id2, name2, city2, date3, function(result,er){
+                     alert(result);
+                     } );
+        
+        
+        
+        
+        
+        }
+        
+        },
+        
+        
+        
+        
+        
+        
+        {
+        text: 'bring',
+        handler: function()
+        {
+        alert("in bring");
+        var id1 = studform1.getForm().findField('Id').getValue();
+        estjsstudentcontroller.searchPerticualrStudent( id1,function(result, er){
+        alert(result);
+        var sres = Ext.decode(result);
+         alert(sres.Records.name__c);
+         //loading data into form
+         
+         alert("in load");
+         studform1.getForm().findField('name__c').setValue(sres.Records.name__c);
+         studform1.getForm().findField('city__c').setValue(sres.Records.city__c);
+         studform1.getForm().findField('admission_date__c').setValue(sres.Records.admission_date__c);
+         studform1.getForm().findField('id').setValue(sres.Records.id);
+         
+   
+         alert("in load1");
+        
+        
+        }, {escape:false});
+        
+        }
+        
+        }
+        
+        
+        
+        
+        
+        ,
+          {
+               
+               text: 'search',
+               handler: function()
+               {   
+               alert("hi in search");                                                        //creating a object of student grid panel
+               var studPanel =  new Ext.create('Ext.student.studPanel',{
+               
+                renderTo :studgrid,
+               });
+               
+               
+                //alert("after");
+                estjsstudentcontroller.searchstudent(function(result, er){ //This method is used to call our controller method
+                     // alert("hi2");
+                      alert(result);                 
+                      var res = Ext.decode(result);
+                      //alert(res);
+                      
+          
+                                      //alert(store1);
+                                      
+                                     store1.loadData(res.Records);
+                                     
+                                     //alert("after");
+                                    }, {escape:false});
+               
+               
+               
+               
+               
+               }      
+        }
+        
+        
+        ]
+        
+        
+        });
+        
+        
+        });                                                                                    //form object end here
+    
+    Ext.define('student__cModel',{
+    extend  : 'Ext.data.Model',
+            fields  : [
+                        {name: 'Id' ,  type: 'string'},
+                        {name: 'name__c', type: 'string'},
+                        {name: 'admission_date__c', type: 'string'},
+                        {name: 'city__c', type: 'string'},
+                        
+                      ],
+    
+    
+    });
+     var store1 = Ext.create('Ext.data.Store', { //Create a store, which is like collection of records with sorting and grouping capability
+                            model       : 'student__cModel', //Associate your store with Model
+                            proxy       : {
+                                            type    : 'memory',
+                                            reader  : {
+                                                type : 'json',
+                                            }
+                                          }
+                                          
+                        });
+    alert("after store"+store1);
+    
+                                                                  //FORM CLASS CREATED HERE
+    
+            Ext.define('Ext.student.studForm',{
+            
+            extend       :'Ext.form.Panel',
+            border: false,
+            fieldDefaults: {
+            labelWidth: 55
+        },
+        defaultType: 'textfield',
+        bodyPadding: 5,
+
+        items: [{
+            fieldLabel: 'Name',
+            width: 300,
+            afterLabelTextTpl: required,
+            name: 'name__c',
+            anchor:'100%'  // anchor width by percentage
+        },
+        ,
+        {
+            fieldLabel: 'city',
+            name: 'city__c',
+             width: 300,
+            anchor: '100%'  // anchor width by percentage
+        },
+        {
+            fieldLabel: 'admissiondate',
+            name: 'admission_date__c',
+             width: 300,
+             xtype: 'datefield'
+        }
+        ,{
+              fieldLabel: 'Id',
+              width: 400,
+              name : 'Id',
+              anchor: '100%'
+              }
+        
+              ]
+              
+              
+              
+        
+            
+            
+       
+       
+    
+    
+   } );
+   
+   
+   
+   
+   Ext.define('Ext.student.studPanel',
+   {
+            extend      : 'Ext.grid.Panel',
+            alias       : 'widget.studpanel',
+            name        : 'studpanel',
+            columnLines : true,
+            autoScroll  : true,
+            singleSelect: true,
+            border      : true,
+            height      : 400,
+            width       : 400,
+            renderTo    :     Ext.getBody(),
+            store       : store1, //Associate with our store
+            plugins: [
+            Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit : 2
+            })
+        ],
+            columns     : [ //Define the required columns
+                              { header      :'id',
+                                text        : 'studentId',
+                                dataIndex   : 'Id',
+                                flex        : 1,
+                                 editor : {
+                                        xtype : 'textfield',
+                                        allowBlank : false
+                                           }
+                                
+                                
+                            },
+                           {
+                                text        : 'admissiondate',
+                                dataIndex   : 'admission_date__c',
+                                flex        : 0.5
+                            },
+                            {
+                                text        : 'studentName',
+                                dataIndex   : 'name__c',
+                                flex        : 0.5
+                            },
+                            {
+                                text        : 'City',
+                                dataIndex   : 'city__c',
+                                flex        : 0.5
+                            }
+                           
+                           
+                        ],
+   
+   });
+    
+    </script>
+    <center>
+    
+    <div id='studsave'> </div><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    <div id='studgrid'> </div>
+    </center>
+</apex:page>

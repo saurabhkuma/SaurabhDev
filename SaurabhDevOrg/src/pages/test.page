@@ -1,0 +1,46 @@
+<apex:page standardController="account" showHeader="false" sidebar="false" >
+
+  <apex:form >
+
+   <apex:pageBlock title="{!account.name}">
+        <apex:outputPanel id="contactDetails">
+            <apex:detail subject="{!$CurrentPage.parameters.cid2}"
+                relatedList="false" title="false"/>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    
+    <apex:pageBlock title="contacts">
+    
+    
+   <apex:commandButton value="ajax" reRender="contactDetails">
+     <apex:param name="cid2" value="00190000016aiNh"/>  
+     </apex:commandButton>  
+    
+    
+    
+    
+    </apex:pageBlock>
+    <apex:pageBlock >
+    <apex:pagemessages />
+    <apex:pageBlockSection >
+    <apex:inputfield value="{!account.name}"/>
+    <apex:inputfield value="{!account.industry}"/>
+    <apex:commandbutton action="{!quicksave}" value="save" />
+    
+    
+    
+    
+    </apex:pageBlockSection>
+    
+    
+    
+    </apex:pageBlock>
+    
+    
+
+</apex:form>
+<h1>search below</h1>
+    <apex:include pageName="search1"/>
+    <h1>search above</h1>
+   
+</apex:page>

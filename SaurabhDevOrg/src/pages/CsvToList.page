@@ -1,0 +1,20 @@
+<apex:page controller="CsvToList">
+<apex:form id="form">
+<apex:pageBlock id="pgblc">
+Select Csv File :<apex:inputFile value="{!CsvAsBlob}" fileName="{!CsvAsString}"></apex:inputFile>
+<apex:commandButton value="convert" action="{!convertCsv}" />
+<apex:inputtext value="{!CsvAsString}" id="input1" />
+</apex:pageBlock>
+
+
+<apex:pageblock id="pagblc2">
+<apex:pageBlockTable value="{!Mcsv}" var="key">
+<apex:column value="{!key}"/>
+<apex:column value="{!Mcsv[key]}"/>
+</apex:pageBlockTable>
+
+
+</apex:pageblock>
+</apex:form>
+  
+</apex:page>

@@ -1,0 +1,20 @@
+<apex:page >
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" />
+    <apex:includeScript value="{!$Resource.SFTK1}" />
+     <apex:includeScript value="{!$Resource.app}" />
+    <!-- Include the RemoteTK component -->
+    <script type="text/javascript">
+        // Get a reference to jQuery that we can work with
+        $j = jQuery.noConflict();
+
+        // Get an instance of the REST API client and set the session ID
+        var client = new forcetk.Client();
+        client.setSessionToken('{!$Api.Session_ID}');
+       alert('{!$Api.Session_ID}');
+
+        client.query("SELECT Name FROM Account LIMIT 1", function(response){
+            $j('#accountname').html(response.records[0].Name);
+        });
+    </script>
+    <p>The first account I see is <span id="accountname"></span>.</p>
+</apex:page>

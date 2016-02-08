@@ -1,0 +1,183 @@
+<apex:page id="page" showHeader="false" sidebar="false">
+  <apex:remoteObjects jsNamespace="MyRemoteObject">
+  <apex:remoteObjectModel name="Account" jsShorthand="Acc" fields="Id,Name,Phone,Fax">
+  <apex:remoteObjectField name="Active__c" jsShorthand="Active"></apex:remoteObjectField>
+  
+   </apex:remoteObjectModel>
+    </apex:remoteObjects>
+  
+  <script type="text/javascript">
+  
+  window.onload = function(){
+   document.getElementById('{!$Component.page:form:pgblc1}').style.display = 'none';
+   retreive();
+   }
+  function  createAcc()
+  {
+     //alert("hi");
+     
+      var display = document.getElementById('{!$Component.page:form:pgblc}').style.display;
+  //alert(display);
+  if(display == 'none')
+  {
+   // alert("ddd");
+     document.getElementById('{!$Component.page:form:pgblc1}').style.display = 'none';
+     document.getElementById('{!$Component.page:form:pgblc}').style.display = 'block';
+     
+  }
+  else
+  {
+      var name = document.getElementById('{!$Component.page:form:pgblc:name}').value;
+      var phone = document.getElementById('{!$Component.page:form:pgblc:phone}').value;
+       //alert(name +""+phone);
+  
+      var accObject = new MyRemoteObject.Acc({
+     
+      Name : name,
+      Phone : phone
+     
+     
+     });
+     
+     accObject.create( function(error, Id)
+     {
+      if(error)
+      {
+       alert("error"+error.message);
+       }
+       else
+        {
+        alert(Id);
+        retreive();
+        }
+     });
+           }   }
+  
+  
+
+  var retreive = function (){
+  var accObject = new MyRemoteObject.Acc();
+  accObject.retrieve({limit: 200}, function(error,records, event){
+  
+  if(error)
+  {
+    alert(error.message);
+  }
+  else
+  {
+   //alert(records);
+     var ul = document.getElementById("AccountList");
+     var select =   document.getElementById("AccountSelect");
+     select.innerHTML =" ";
+     records.forEach(function(record) {
+                        var val = record.get("Id");
+                        var whText = record.get("Name");
+                        whText += " -- ";
+                        whText += val;
+                        
+                        
+                        //select.appendChild("<option class='ddindent' value='"+ val +"'>"+document.createTextNode(whText)+"</option>");
+                         var opt = document.createElement("option");
+                         opt.appendChild(document.createTextNode(whText));
+                         opt.value = val;
+                         select.appendChild(opt);
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(whText));
+                       // ul.appendChild(li);
+                    });
+                }
+     
+  
+  
+  
+  });}
+  
+  function deleteAccount(){
+  
+  var c = confirm("are your sure your want to delete this record");
+  if(c)
+  {
+  var value = document.getElementById("AccountSelect").value;
+  var objForDel = new MyRemoteObject.Acc();
+  objForDel.del(value);
+  retreive();
+  alert(value);
+  }
+  }
+  
+  function updateAccount()
+  {
+  var display = document.getElementById('{!$Component.page:form:pgblc1}').style.display;
+  //alert(display);
+  if(display == 'none')
+  {
+   // alert("ddd");
+     document.getElementById('{!$Component.page:form:pgblc}').style.display = 'none';
+     document.getElementById('{!$Component.page:form:pgblc1}').style.display = 'block';
+     
+     
+     
+  }
+  else
+  {
+  
+   // alert("your are ready for update");
+    var value = document.getElementById("AccountSelect").value;
+    var obj = new MyRemoteObject.Acc();
+    obj.retrieve({where :{Id :{ eq: value } } }, function(err, results){
+    
+     if(err)
+     {
+       alert(err);
+     }
+     else
+     {
+    //alert(JSON.stringify(results));
+      results.forEach(function(result){
+       
+       document.getElementById('{!$Component.page:form:pgblc1:uName}').value = result.get("Name");
+       document.getElementById('{!$Component.page:form:pgblc1:uPhone}').value = result.get("Phone");
+       document.getElementById('{!$Component.page:form:pgblc1:uFax}').value = result.get("Fax");
+      
+      });
+     }
+    });
+    
+  }
+  }
+  </script>
+  
+  
+
+   <!--<button onclick="retreive()"> retreive</button>-->
+   <center>
+    <button onclick="createAcc()"> create</button>
+     <button id="deleteAcc" onclick="deleteAccount()">delete</button>
+      <button id="updateAcc" onclick="updateAccount()">update</button>
+  
+     <ul id="AccountList">
+    </ul>
+    <select id="AccountSelect">
+    <option>not selected</option>
+    </select>
+   
+  <apex:form id="form">
+  
+  <apex:pageBlock id="pgblc" >
+ 
+  Name :<apex:inputText id="name" label="Name" title="Name"/>
+  Phone : <apex:inputTExt id="phone"/>
+  <button onclick="createAcc()"> create</button>
+  
+  </apex:pageBlock>
+  <apex:pageBlock id="pgblc1" >
+   Name : <apex:inputText id="uName"/> 
+   Phone : <apex:inputText id="uPhone"/>
+   Fax   : <apex:inputText id="uFax"/>
+   <button id="update" onclick="updateAccount()" >update</button>
+  </apex:pageBlock> 
+  
+  </apex:form>
+  
+  </center>
+</apex:page>

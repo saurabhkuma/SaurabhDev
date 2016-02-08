@@ -1,0 +1,43 @@
+<apex:page >
+    <!-- Include the RemoteTK component -->
+    <c:RemoteTK />
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" />
+    <script type="text/javascript">
+        // Get a reference to jQuery that we can work with
+        $j = jQuery.noConflict();
+
+        // Get an instance of the RemoteTK client
+        var client = new remotetk.Client();
+
+        client.query("SELECT Name FROM Account LIMIT 1", function(response){
+            $j('#accountname').html(response.records[0].Name);
+        });
+        
+        $j(document).ready(function(){
+        alert("hi");
+        $j("#click").click(function(){
+        alert("in");
+        
+        client.create("Account",{"Name" : "saurabh5"}, function(response){
+            
+            if(response.errors[0]!=null)
+            {
+               $j('#create').html(response.errors[0]);   
+            }
+           else
+           {
+            $j('#create').html("<h1> a new record has been created id:"+response.id+"</h1>");
+            }      
+        });
+        
+        });
+        });
+        
+        
+        
+        
+    </script>
+    <p>The first account I see is <span id="accountname"></span>.</p>
+    <p><div id="create"></div></p>
+    <button id="click" value="click"  label="click">click</button>
+</apex:page>

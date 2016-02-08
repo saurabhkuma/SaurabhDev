@@ -1,0 +1,20 @@
+<apex:page showHeader="false" controller="ShowReportController" sidebar="false" >
+<apex:form id="form" >
+<apex:actionFunction action="{!showReport}" name="showreporting" reRender="pageblc1"/ >
+<apex:pageblock id="pageblc"  >
+<apex:pageblockSection id="pageblcsec">
+
+<apex:selectList value="{!reportId}"  size="1" onchange="showreporting()" >
+<apex:selectOptions value="{!allid}"></apex:selectOptions>
+</apex:selectList>
+
+</apex:pageblocksection>
+
+
+</apex:pageblock>
+<apex:pageblock id="pageblc1"    >
+<analytics:reportChart reportId="{!reportId}"  ></analytics:reportChart>
+</apex:pageblock>
+</apex:form>
+  
+</apex:page>

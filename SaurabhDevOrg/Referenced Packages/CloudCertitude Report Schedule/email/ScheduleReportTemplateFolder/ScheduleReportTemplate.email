@@ -1,0 +1,20 @@
+<messaging:emailTemplate subject="{!relatedTo.CC_RptSchd__Reports__c} is attached" recipientType="User" relatedToType="CC_RptSchd__ScheduledReport__c">
+<messaging:plainTextEmailBody >
+    
+    Hi,
+    
+    please find attached the report(s) you have requested...
+    
+    Kind regards,
+    {!$Organization.Name}
+    
+    </messaging:plainTextEmailBody>
+    
+       
+       <messaging:attachment filename="{!relatedTo.CC_RptSchd__Reports__c}.csv">            
+           
+            <c:ReportExportComponent xstrRptname="{!relatedTo.CC_RptSchd__RptId__c}"/>
+       </messaging:attachment>
+     
+    
+</messaging:emailTemplate>

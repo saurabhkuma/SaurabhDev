@@ -1,0 +1,35 @@
+<apex:page >
+<script type="text/javascript">
+function click1()
+           {
+           alert("hi");
+           var url= "https://c.ap1.visual.force.com/apex/forcetk1"+ window.location.hash;
+                window.open(url,'res',700,800);
+            alert("bye");
+            window.close();
+            }
+
+if (window.location.hash) {
+alert(window.location.hash);
+
+
+                  var oauthResponse = {};
+                var message = window.location.hash.substr(1);
+                alert(window.location.hash.substr(1));
+                var nvps = message.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = unescape(parts[1]);
+                    
+                }
+                
+            }
+           
+ 
+</script>
+
+<apex:form >
+<apex:commandButton onclick="javascript:click()" value="click" title="click"/>
+</apex:form>
+<button onclick="click1()">press</button>
+</apex:page>

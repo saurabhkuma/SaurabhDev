@@ -1,0 +1,82 @@
+<apex:page StandardController="User" extensions="UserOperation">
+<script type="text/javascript">
+function resetPassword(userid)
+{
+  var password = "" ;
+  var cnf = confirm("do you want to set password by yourself")
+  if(cnf== true)
+  {
+  password =  prompt("enter your new password","");
+  }
+  Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.UserOperation.doChangePassword}', userid ,password, handleResult );
+
+}
+
+function handleResult(result,event)
+{
+
+ if(event.status)
+ {
+    alert(result);
+ }
+    alert(event);
+}
+</script>
+
+<apex:form >
+
+Enter User Name : <apex:inputText value="{!Name}"/>
+<apex:commandButton action="{!searchUser}" value="search"/>
+<apex:commandButton action="{!showcontroller}" value="New User"  />
+<apex:pageblock rendered="{!NOT(ISBLANK(mUser))}">
+<apex:pageblockTable value="{!mUser}"  var="ur" rendered="{!!newuser}" >
+<apex:column headerValue="EDIT">
+<apex:commandLink value="edit" action="{!editUser}" target="_blank" onclick="if(!confirm('are you sure')){return false};" >
+<apex:param value="{!ur}"  name="selectedUserId"/>
+</apex:commandLink>
+</apex:column>
+<apex:column value="{!mUser[ur].Name}"  />
+<apex:column value="{!mUser[ur].email}"/>
+<apex:column value="{!mUser[ur].Profile.name}"/>
+<apex:column value="{!mUser[ur].userRole.name}"/>
+<apex:column value="{!mUser[ur].IsActive}"/>
+<apex:column headerValue="activate/deactivate" >
+<apex:commandLink value="Deactivate" action="{!deactivateUser}" rendered="{!mUser[ur].isActive}" onclick="return confirm('are you sure to Deactivate this user ?');" >
+<apex:param value="{!ur}"  name="selectedUserId"/>
+</apex:commandLink>
+<apex:commandLink value="activate" action="{!activateUser}" rendered="{!!mUser[ur].isActive}" onclick="return confirm('are you sure to Activate this user ?');" >
+<apex:param value="{!ur}"  name="selectedUserId"/>
+</apex:commandLink>
+</apex:column>
+<apex:column >
+<apex:commandButton value="ResetPassword" id="resetpasswordId" onclick="resetPassword('{!ur}');">
+<apex:param value="{!ur}" name="userId"/>
+</apex:commandButton>
+</apex:column>
+</apex:pageblockTable>
+    
+</apex:pageblock>
+ <apex:pageBlock id="pgblc2" rendered="{!newuser}" title="New User">
+     <apex:pageMessages id="message"></apex:pageMessages>
+    <apex:pageBlockSection id="pgbs1" >
+     Enter First Name   :<apex:inputField id="fname" value="{!nUser.FirstName}" />  </apex:pageBlockSection>
+       <apex:pageBlockSection id="pgbs2">
+    Enter Last  Name   :<apex:inputField id="lname" value="{!nUser.LastName}" required="false" />  </apex:pageBlockSection>
+    
+     <apex:pageBlockSection id="pgbs3">
+      Enter Phone No     :<apex:inputField id="pno" value="{!nUser.Phone}"/></apex:pageBlockSection>
+         <apex:pageBlockSection id="pgbs4">
+     Enter Manager Nane :<apex:inputField id="mname" value="{!nUser.ManagerId}"/>
+             </apex:pageBlockSection>
+             <apex:pageBlockSection id="pgbs5">
+     Enter Email Id     :<apex:inputField id="email" value="{!nUser.Email}" required="false"/>
+            </apex:pageBlockSection>
+        <apex:pageBlockSection id="pgbs6">
+     Enter Title     :<apex:inputField id="title" value="{!nUser.title}" required="false"/>
+            </apex:pageBlockSection>
+    <apex:commandButton value="Create" id="createUser" action="{!createNewUser}" style="width:90px"  reRender="message" />
+</apex:pageBlock>
+</apex:form>
+  
+  
+</apex:page>

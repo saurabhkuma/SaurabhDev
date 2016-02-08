@@ -1,0 +1,75 @@
+<apex:page id="input1" standardController="travel_booking__c" recordSetVar="travel" showHeader="false" docType="html-5.0">
+
+
+
+
+
+
+
+
+
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>travel booking search</h1>
+  ::::::::::::search your booking here
+  <!-- End Default Content REMOVE THIS -->
+  
+  <br/>
+  <br/>
+  <apex:form id="input2" ><center>
+  <table>
+  <tr><td><h1>bus type</h1></td>
+  
+<td>
+
+<apex:selectList multiselect="false" size="1"  id="bustype">
+<apex:selectOption itemvalue="sleeper" itemLabel="sleeper"></apex:selectOption>
+<apex:selectOption itemvalue="Ac volvo" itemLabel="Ac volvo"> </apex:selectOption>
+<apex:selectOption itemvalue="Non Ac volvo" itemLabel="Non Ac volvo"></apex:selectOption>
+<apex:selectOption itemvalue="sitting" itemLabel="sitting"></apex:selectOption>
+</apex:selectList>
+</td>
+</tr>
+<tr><td><h1>booking status</h1></td>
+  
+<td>
+
+<apex:selectList multiselect="false" size="1"  id="status">
+<apex:selectOption itemvalue="tentative" itemLabel="tentative"></apex:selectOption>
+<apex:selectOption itemvalue="definite" itemLabel="definite"> </apex:selectOption>
+<apex:selectOption itemvalue="prospect" itemLabel="prospect"></apex:selectOption>
+</apex:selectList>
+</td>
+</tr>
+<tr>
+<td><h1>journey date</h1></td><td>
+<apex:inputField value="{!travel_booking__c.journey_date__c} "  id="jdate"/>
+ </td>
+</tr>
+<tr>
+<td><h1>booking date</h1></td><td>
+<apex:inputText id="input3"  onfocus="DatePicker.pickDate(false, 'input1:input2:input3', false);" />  
+</td> </tr>
+</table><br/><br/>
+
+<apex:commandButton onclick="searchtravel()" title="search" value="search" />
+</center>
+
+
+</apex:form>
+<apex:pageBlock id="searchvalue" title="searched result"></apex:pageBlock>
+
+<script type="text/javascript">
+function searchtravel()
+{
+var bustype1= document.getElementById('{!$Component.input1:input2:bustype}').value;
+var bookingstatus = document.getElementById('{!$Component.input1:input2:status}').value;
+var jdate=  document.getElementById('{!$Component.input1:input2:jdate}').value;
+var bdate= document.getElementById('{!$Component.input1:input2:input3}').value;
+alert(bustype1 +""+bookingstatus+""+jdate+""+bdate);
+document.getElementById('{!$Component.input1:searchvalue}').innerHTML="hi"+bustype1;
+
+}
+</script>
+
+
+</apex:page>

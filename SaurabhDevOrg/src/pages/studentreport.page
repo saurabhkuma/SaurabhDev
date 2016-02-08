@@ -1,0 +1,91 @@
+<apex:page controller="StudentReportController" id="page1"  >
+
+<apex:form id="form">
+<apex:pageBlock id="pgblc" >
+<apex:pageblockSection title="student report" id="pgblcsec"> 
+<apex:inputField value="{!remark.name}" label="student name" id="name"/ > 
+<apex:inputField value="{!remark.classTeacher__c}" label="class teacher" id="classteacher"/>
+<apex:selectList value="{!behaviour}" label="behaviour of student" size="1" id="behaviour">
+<apex:selectOptions value="{!behaviourallist}"></apex:selectOptions>
+</apex:selectList>
+<apex:selectRadio value="{!score}" label="score accuired" id="score1" onchange="test(this);">
+<apex:selectOptions value="{!scorelist}"></apex:selectOptions>
+</apex:selectRadio>
+<apex:inputCheckbox value="{!promoted}" label="promoted" id="promote"/>
+<apex:selectList value="{!leadershippoint}" label="leadership Quality" size="1" id="leadership">
+<apex:selectOptions value="{!leadershippoints}">
+</apex:selectOptions>
+</apex:selectList>
+</apex:pageblockSection>
+<apex:pageBlockButtons >
+<apex:commandButton title="save" value="save" onclick="save();" />
+
+
+</apex:pageBlockButtons>
+
+</apex:pageBlock>
+
+</apex:form>
+
+
+
+
+
+<script type ="text/javascript">
+
+var score = 0;
+
+function test(radio)
+{
+
+//alert(radio.value);
+score = radio.value;
+
+}
+function save()
+{
+  var name =  document.getElementById('page1:form:pgblc:pgblcsec:name').value;
+  var teachername = document.getElementById('page1:form:pgblc:pgblcsec:classteacher').value;
+  var leadershippoint = parseInt(document.getElementById('page1:form:pgblc:pgblcsec:leadership').value);
+  var behaviour = document.getElementById('page1:form:pgblc:pgblcsec:behaviour').value;
+  var promotedtemp = document.getElementById('page1:form:pgblc:pgblcsec:promote').value;
+  var promoted = false;
+  
+  if(promotedtemp == 'on')
+  {
+   var promoted = true;
+  }
+  
+ 
+ 
+  alert(promoted+''+score);
+  var conf = confirm("do you want to save it");
+  if(conf)
+  {
+  Visualforce.remoting.Manager.invokeAction(
+        '{!$RemoteAction.StudentReportController.saveRecord}', 
+       name ,teachername, leadershippoint, behaviour,  score,  promoted , 
+        function(result, event){
+            if(event.status==true)
+  {
+    alert("successfully created");
+    }
+  else
+  {
+ alert(event.status);
+
+  }
+        }, 
+        {escape: true}
+    );
+  
+  
+  
+  }
+  
+  }
+  
+
+</script>
+
+ </apex:page>

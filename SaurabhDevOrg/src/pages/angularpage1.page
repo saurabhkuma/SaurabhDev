@@ -1,0 +1,71 @@
+<apex:page standardStylesheets="false" sidebar="false" showHeader="false">
+<html xmlns:ng ="http://angularjs.org" ng-app ="reverseApp" lang = "en">
+
+<!--including angularjs library in visualforcepage-->
+       <head>
+            <meta charset="utf-8"/>
+            <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet"/>
+            <link href="https://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"/>
+            <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.js"/>
+            <style>
+                .input-mysize { width: 550px }
+                .search-query {
+                padding-left: 469px;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ5JREFUeNpi+P//PwMQMANxERCfAeI/UBrEZwbJQ9WAFR0A4u1AbAnEbFB6O1ScGaawGoi3wHQiYyBYDZKHKbwHxLo4FOqC5GEKf4Ksw6EQ5IyfIDYTkPEUiNUZsAOQ+F9GRkYJEKcFiDficSOIcRjE4QTiY0C8DuRbqAJLKP8/FP9kQArHUiA+jySJjA8w4LAS5KZd0MAHhaccQIABALsMiBZy4YLtAAAAAElFTkSuQmCC);
+                background-repeat: no-repeat;
+                background-position: 562px 8px;
+                }
+                
+                
+            </style>
+        </head>
+        
+        <script Type="text/javascript">
+        var myapp =  angular.module('reverseApp', [] );
+        var filter = myapp.filter('reverse',function(){
+        
+        return function(input, uppercase)
+        {
+        input = input ||'';
+        var out = "";
+        for( var i =0;i< input.length; i++)
+        {
+          out = input.charAt(i) + out;
+          
+           
+        }
+        if(uppercase==true)
+        {
+        out = out.toUpperCase();
+        }
+        return out;
+        
+        };
+        
+        
+        
+        });
+        
+         var controller = filter.controller('MyController', ['$scope', function($scope) {
+              $scope.greeting = 'hello';
+                         } ]);
+        
+      </script>
+      
+      <body>
+      
+    
+      <center>
+      
+      <div ng-controller="MyController">
+       <input ng-model ="greeting" type ="text"/>
+       <br/>
+        normal     : {{greeting }}<br/>
+        reverse    :{{greeting|reverse}}<br/>
+        REVERSE    :{{greeting|reverse:true}}
+        </div></center>
+      </body>
+
+</html>
+  
+</apex:page>

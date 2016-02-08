@@ -1,0 +1,57 @@
+<apex:page controller="GoogleChartsController" sidebar="false"  id="page" showHeader="false"  >
+<apex:includeScript id="chart" value="https://www.google.com/jsapi" />
+<apex:sectionHeader title="Welcome to Charting by Javascript with google" id="secheader" subtitle="by saurabh kumar"/>
+<table>
+<tr><td>
+<div id="pichart">   </div></td><td>
+<div  id="myChart"> </div></td></tr>
+</table>
+
+
+<div id="tablechart"></div>
+<script type="text/javascript">
+
+google.load('visualization' , '1.0' ,{'packages' : ['corechart']});
+google.load('visualization', '1.0' , {'packages' :['table']});
+
+google.setOnLoadCallback(initChart);
+
+function initChart()
+{
+
+GoogleChartsController.loadOpps( function(result,event){
+
+var visualization = new google.visualization.ColumnChart(document.getElementById('myChart'));
+var pichartvisualization = new google.visualization.PieChart(document.getElementById('pichart'));
+var tablechart = new google.visualization.Table(document.getElementById('tablechart'));
+var tabledata = new google.visualization.DataTable();
+tabledata.addColumn('string', 'Opportunity');
+tabledata.addColumn('number', 'Expected Revenue');
+tabledata.addColumn('number', 'Amount');   
+for(var i =0; i<result.length;i++){
+var r = result[i];
+tabledata.addRow([r.Name, r.ExpectedRevenue, r.Amount]);
+}
+
+visualization.draw(tabledata, {legend : {position: 'top', textStyle: {color: 'blue', fontSize: 10}},
+width:window.innerWidth,vAxis:{textStyle:{fontSize: 10}},hAxis:{textStyle:{fontSize: 10},showTextEvery:1,slantedText:false}});
+
+var options = {'title':'opportunity pi chart',
+                       'width':400,
+                       'height':300};
+pichartvisualization.draw(tabledata,options);
+tablechart.draw(tabledata,{showRowNumber: true ,'width' : 1200, 'height' : 400});
+
+}, {escape:true});
+}
+
+
+
+
+
+
+</script>
+
+
+
+</apex:page>

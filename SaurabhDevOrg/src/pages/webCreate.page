@@ -1,0 +1,20 @@
+<apex:page >
+<apex:form >
+  <apex:includeScript value="/soap/ajax/20.0/connection.js"/> 
+  <script type="text/javascript">
+    function CreateNewAccount()
+    {
+       var username = 'rishuom@sales.com';
+       var  password = 'saurabh024z59m8aNnAhSMO8Cl8abROukUM';
+       sforce.connection.login("rishuom@sales.com","saurabh024"+"z59m8aNnAhSMO8Cl8abROukUM");  //    get Session Id
+       var objAccount = new sforce.SObject("Account");      //    Instantiate Account object
+       var getName = prompt("Enter Name of the Account","Test Account");
+       objAccount.Name = getName;
+       var result = sforce.connection.create([objAccount]);    //    Insert Operation
+       window.open('/'+result[0].id);     //    Redirect to New Account
+            }
+  </script>
+  <apex:outputText value="Click button to Create New Account"/><p/>
+  <apex:commandButton onClick="CreateNewAccount()" value="New Account" />        
+  </apex:form>
+  </apex:page>

@@ -1,0 +1,147 @@
+<apex:page controller="combocontroller1" id="pg"  >
+
+<apex:includeScript value="{!URLFOR($Resource.ext,'/ext-4.2.1.883/examples/shared/include-ext.js')}"/>
+
+<script type = "text/javascript">
+Ext.require([ 'Ext.form.*',
+'Ext.grid.*',
+'Ext.data.*',
+'Ext.util.*',
+'Ext.toolbar.Paging',
+'Ext.ux.PreviewPlugin', 
+'Ext.ModelManager',
+'Ext.tip.QuickTipManager'
+]);
+   
+      Ext.ns("Ext.search");
+
+function func1()
+{
+Ext.tip.QuickTipManager.init();
+document.getElementById('search1').innerHTML = '';
+
+var objname = document.getElementById('{!$Component.pg.form1.sel1}').value;
+alert(objname);
+var pluginExpanded = true;
+var searchpanel =  new Ext.create('Ext.search.searchPanel',{
+
+
+                        
+                            
+                          
+               
+                renderTo :search1,
+               });
+               
+               
+               alert(objname);
+             combocontroller1.getAllRecord( objname,function(result, er){ //This method is used to call our controller method
+                     // alert("hi2");
+                      //alert(result);                 
+                      var res = Ext.decode(result);
+                      //alert(res);
+                      
+          
+                                     // alert(store1);
+                                      
+                                     store1.loadData(res.Records);
+                                     
+                                     //alert("after");
+                                    }, {escape:false});
+               
+               
+               
+                store.loadPage(1);
+               
+               }      
+       
+
+
+
+
+
+
+    Ext.define('search__cModel',{
+    extend  : 'Ext.data.Model',
+            fields  : [
+                        {name: 'name' ,  type: 'string'},
+                        {name: 'id', type: 'string'},
+                        
+                        
+                      ],
+    
+    
+    });
+     var store1 = Ext.create('Ext.data.Store', { //Create a store, which is like collection of records with sorting and grouping capability
+                            model       : 'search__cModel', //Associate your store with Model
+                            pageSize    : 10,
+                            proxy       : {
+                                            type    : 'memory',
+                                            reader  : {
+                                                type : 'json',
+                                            }
+                                          }
+                                          
+                        });
+
+Ext.define('Ext.search.searchPanel',
+   {
+            extend      : 'Ext.grid.Panel',
+            alias       : 'widget.searchpanel',
+            name        : 'searchpanel',
+            columnLines : true,
+            autoScroll  : true,
+            singleSelect: true,
+            border      : true,
+            store       : store1, //Associate with our store
+            
+            columns     : [ //Define the required columns
+            
+            
+                            {
+                                text        : 'Name',
+                                dataIndex   : 'name',
+                                flex        : 0.5
+                            },
+                            
+                              { header      :'id',
+                                text        : 'Id',
+                                dataIndex   : 'id',
+                                flex        : 1,
+                     
+                                
+                                
+                              }
+                           
+                           
+                        ],
+                        bbar: Ext.create('Ext.PagingToolbar', {
+                                                                store: store1,
+                                                                displayInfo: true,
+                                                                displayMsg: 'Displaying topics {0} - {1} of {2}',
+                                                                emptyMsg: "No topics to display"
+                                                           
+                                                                    }),
+            height      : 400,
+            width       : 400,
+   
+   });
+
+</script>
+
+
+  
+  
+  <apex:form id="form1">
+  <apex:outputText value="select object"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  
+  <apex:selectList size="1" onchange="func1();" id="sel1">
+  
+  <apex:selectOptions value="{!allObj}" ></apex:selectOptions>
+  
+  </apex:selectList>
+  
+  
+  </apex:form>
+  <div id= "search1"></div>
+</apex:page>

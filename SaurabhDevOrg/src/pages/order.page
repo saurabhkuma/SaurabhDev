@@ -1,0 +1,67 @@
+<apex:page standardStylesheets="true" sidebar="false"  showHeader="false"  standardController="Merchandise__c" recordSetVar="products"  >
+    <marquee><h1>hi {!$User.FirstName} </h1></marquee>
+  <center>
+ <!-- <apex:pageBlock >
+  <apex:pageBlockTable value="{!products}"  var="item1">
+  <apex:column >
+  <apex:outputText value="{!item1.name}" id="tablevalue"></apex:outputText>/>
+  </apex:column>
+  </apex:pageBlockTable>
+  
+  </apex:pageBlock>-->
+  <apex:form >
+  <apex:dataTable value="{!products}" var="pitem" rowClasses="odd,even"  >
+  <apex:column headerValue="Product">
+<apex:outputText value="{!pitem.name}"/>
+
+</apex:column>
+<apex:column headerValue="QUANTITY">
+<apex:outputfield value="{!pitem.quantity__c}">
+<apex:inlineEditSupport event="ondblclick"  showOnEdit="update"/>
+</apex:outputfield>
+
+ <!-- </apex:column>
+  <apex:column headerValue="present_quantity">
+  
+  <apex:inputField value="{!pitem.quantity__c}"/>-->
+  </apex:column>
+  </apex:dataTable>
+  <br/>
+  <br/>
+  <apex:commandButton id="update" action="{!quicksave}"  value="update"/>
+  
+  </apex:form>
+  <br/>
+  <br/>
+
+  </center>
+  <div id="sortvalue">
+  </div>
+  <script type='text/javascript'>
+    
+  var  sortvalue=[];
+      <apex:repeat value="{!products}" var="c">
+          sortvalue.push({
+              Name : "{!c.Name}",
+              CreatedDate : "{!c.quantity__c}",
+              toString : function() { 
+                  return this.CreatedDate+' '+ this.Name+'     ';
+                  
+              }
+          });
+      </apex:repeat>
+      sortvalue.sort(function(con1, con2) {
+          var comp = con1.CreatedDate - con2.CreatedDate;
+          if (comp > 0) {
+             return -1;
+          }
+          if (comp < 0) {
+             return 1;
+          }
+          return 0;
+      });
+   document.getElementById('sortvalue').innerHTML= sortvalue;
+  </script>
+  This is your new Page: count inventory
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

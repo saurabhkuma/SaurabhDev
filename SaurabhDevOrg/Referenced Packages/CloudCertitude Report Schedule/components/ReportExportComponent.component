@@ -1,0 +1,4 @@
+<apex:component controller="CC_RptSchd.CSVStream" access="global">
+    <apex:attribute name="xstrRptname" description="reportID" type="String" assignTo="{!strRptname}"/>
+    <apex:outputText value="{!CSVStream}" escape="false"/>
+</apex:component>

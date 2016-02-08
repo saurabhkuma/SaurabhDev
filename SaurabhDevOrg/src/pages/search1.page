@@ -1,0 +1,57 @@
+<apex:page standardController="travel_booking__c" extensions="travelsearch"  showHeader="false" id="one" docType="html-5.0"  renderAs="{!Chooserender}" rendered="true" >  
+  <center>
+  <apex:form id="input1" >  
+ 
+  
+  
+  <apex:outputPanel style="padding:50px 50px 50px 50px" id="userDetail">
+  <apex:pageBlock title="{!$User.Username}" id="searchdetail" rendered="{!!isEdit}" >
+  
+ <table><tr><td>journey date</td><td><apex:inputText id="input2"  onfocus="DatePicker.pickDate(false, 'one:input1:searchdetail:input2', false);" value="{!journeydate}" /></td></tr><tr><td> status</td><td>
+ <apex:selectList multiselect="false" size="1"  id="status" value="{!searchstring}">
+<apex:selectOption itemvalue="tentative" itemLabel="tentative"></apex:selectOption>
+<apex:selectOption itemvalue="definite" itemLabel="definite"> </apex:selectOption>
+<apex:selectOption itemvalue="prospect" itemLabel="prospect"></apex:selectOption>
+</apex:selectList>
+ </td></tr>
+ <tr><td>bus type</td>
+  
+<td>
+
+<apex:selectList multiselect="false" size="1"  value="{!bustype}">
+<apex:selectOption itemvalue="sleeper" itemLabel="sleeper"></apex:selectOption>
+<apex:selectOption itemvalue="Ac volvo" itemLabel="Ac volvo"> </apex:selectOption>
+<apex:selectOption itemvalue="Non Ac volvo" itemLabel="Non Ac volvo"></apex:selectOption>
+<apex:selectOption itemvalue="sitting" itemLabel="sitting"></apex:selectOption>
+</apex:selectList>
+</td>
+</tr>
+ <tr>
+<td>booking date</td><td>
+<apex:inputField value="{!travel_booking__c.journey_date__c} "  id="jdate"/> 
+</td> </tr></table>
+   
+<apex:commandButton value="Search records" action="{!search}"/>  
+<apex:commandButton value="invoice search" action="{!invoicesearch}"/>  
+</apex:pageBlock>
+   <apex:pageBlock title="Search Result" id="blockdata" rendered="{!isEdit}" >  
+    <apex:pageblockTable value="{!travel}" var="a"  >  
+     <apex:column headerValue=" booking id">  
+      <apex:outputlink value="https://ap1.salesforce.com/{!a.name}">{!a.name}</apex:outputlink>  
+     </apex:column>  
+     <apex:column value="{!a.bookedby__c}"/>  
+     <apex:column value="{!a.pic_up_venue__c}"/>  
+    </apex:pageBlockTable>     
+   
+   
+  <apex:commandButton value="new search" action="{!clear}" />  
+  <apex:commandLink value="PDF" action="{!genpdf}" target="_blank"></apex:commandLink> 
+  </apex:pageBlock>
+</apex:outputPanel>
+  </apex:form> 
+   
+  
+  </center> 
+  <script type="text/javascript">
+  </script>
+ </apex:page>

@@ -1,0 +1,27 @@
+<apex:page id="one" docType="html-5.0" standardController="invoice__c" extensions="invoicesearch" showHeader="false">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>search line item</h1>
+  <br/><br/><br/><br/><br/>
+  
+  <!-- End Default Content REMOVE THIS -->
+  <apex:form id="input1" ><h1>invoice name</h1>
+  <apex:selectList value="{!invname}" multiselect="false" size="1">
+  <apex:selectOptions value="{!invoicelist}">
+  </apex:selectOptions>
+  </apex:selectList>
+  <apex:commandButton action="{!fetch}" value="search"/>
+  
+  
+  <apex:pageBlock id="block1" title="line items present" >
+  <apex:pageblockTable value="{!lineitem}" var="l">
+  <apex:column value="{!l.name}"/>
+  <apex:column value="{!l.Quantity__c}"/>
+  
+  
+  </apex:pageblockTable>
+  
+  </apex:pageBlock>
+  </apex:form>
+  <script type="text/javascript">
+  </script>
+</apex:page>

@@ -1,0 +1,44 @@
+<apex:page standardController="Books__c" recordSetVar="book" showHeader="false">
+
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>all book list</h1>
+  <apex:form >
+  <apex:pageBlock title="this is book list"  >
+  <apex:pageBlockTable value="{!book}" var="item">
+  <apex:column value="{!item.name}"/>
+  <apex:column value="{!item.bookname__c}"/>
+  <apex:column value="{!item.borrower__c}"/>
+  </apex:pageBlockTable>
+  
+  
+  
+  </apex:pageBlock>
+  
+  
+  </apex:form>
+  <apex:composition template="testInsertTag">
+  
+   </apex:composition>
+  <apex:pageBlock title="dynamic">
+        <apex:outputPanel id="contactDetails">
+            <apex:detail subject="{!$CurrentPage.parameters.cid}"
+                relatedList="false" title="false"/>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    <apex:pageBlock title="books">
+    <apex:form >
+        <apex:dataList value="{! book}" var="bb">
+        <apex:commandLink rerender="contactDetails">
+        
+            {! bb.Name}
+            <apex:param name="cid" value="{! bb.id}"/>
+</apex:commandLink>
+        </apex:dataList>
+    </apex:form>
+</apex:pageBlock>
+    
+    
+    
+  
+  
+</apex:page>

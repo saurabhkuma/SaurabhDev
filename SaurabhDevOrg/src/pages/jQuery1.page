@@ -1,0 +1,48 @@
+<apex:page standardController="Account" recordSetVar="account1" docType="html-5.0" id="page"  >    
+
+
+<script  type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"> </script>
+
+         <apex:dataList value="{!account1}" var="account" id="theList">
+           <a class="accounts" onclick="return showDialog('{!account.name}','{!account.Phone}')"   >
+           <apex:outputText value="{!account.name}"/></a>
+       
+           </apex:dataList>
+ <h1>hello</h1>
+  <button>Click me</button>
+  <script type="text/javascript">
+
+
+
+j$ = jQuery.noConflict();
+
+   alert("hi1");
+ jQuery(document).ready(function(){
+ 
+
+ jQuery("#phone").dialog({autoOpen: false, modal: true, position: "center"});
+   });
+
+function showDialog(name,phone)
+{
+alert(phone);
+jQuery("#phoneNumber").html(phone);
+jQuery("#phone").dialog("open");
+ jQuery("#phone").dialog("option" , "title" , name);
+
+return false;
+
+}
+
+ alert("hi12");
+
+
+
+
+</script>
+<div id="phone" >
+ <div style="float:left">Phone:</div><div id="phoneNumber"></div>
+
+</div>
+
+</apex:page>

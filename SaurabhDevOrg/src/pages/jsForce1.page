@@ -1,0 +1,71 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="sforceController">
+<script src="https://na6.salesforce.com/soap/ajax/30.0/connection.js" ></script>
+<script  type="text/javascript">
+var username='niteshmi@cybage.com';
+
+
+var password= 'nallasopara@19FixWDirMeby0qmQgkn3O6fJ';
+
+var result = sforce.connection.login(username, password);
+allObject= sforce.connection.describeGlobal();
+allsObject= allObject.sobjects;
+
+function populate()
+{
+var selectopt = document.getElementById('val');
+alert(selectopt);
+for(var i=0;i<allsObject.length;i++)
+{
+   var rec= allsObject[i];
+   var val1= rec.name
+
+   var opt = document.createElement('option');
+ 
+   opt.value=val1;
+  
+   opt.textContent= val1;
+ 
+   selectopt.appendChild(opt);
+   
+ }
+ alert("complete");
+}
+  function connect(){
+<!--alert(result.sessionId);-->
+var text= "<table>" ;
+var object1= document.getElementById('val').value;
+<!--alert(object1);-->
+result1 = sforce.connection.query("Select Name, Id from "+object1);
+
+records = result1.getArray('records');
+text +="<tr><td> Name</td><td>ID</td></tr>";
+  for (var i=0; i< records.length; i++) {
+    var record = records[i];
+    text += "<tr><td> "+record.Name+"</td><td>"+record.Id+"</td></tr>";
+  }
+  text +="</table>";
+  
+  document.getElementById('div1').innerHTML= text;
+  alert("success");
+ 
+
+  
+}
+  
+ </script>
+ 
+ <apex:form >
+ <h1>enter object to search record</h1>
+ <div id="obj1"></div>
+ <select id="val">
+ <option value="Account">Account</option>
+ <option value="Contact">Contact</option>
+ <option value="User">User</option>
+ <option value="Director__c">Director</option>
+ <option value="Student__c">Student</option>
+ </select>
+ <apex:commandButton onclick="populate();" title="connect" value="populate" reRender="none"/>
+ <apex:commandButton onclick="connect();" title="connect" value="search" reRender="none"/>
+ </apex:form>
+ <div id="div1"></div>
+</apex:page>

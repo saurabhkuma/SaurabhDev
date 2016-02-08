@@ -1,0 +1,86 @@
+<apex:page controller="myExtjs1" standardStylesheets="false" showHeader="false" sidebar="false">
+     <link rel="stylesheet" type="text/css" href="{!$Resource.extcss}" />
+    <apex:includeScript value="{!$Resource.extjs}"/>
+   
+     <apex:form >
+        <div id="gridSpace"></div> 
+    </apex:form>
+    
+ 
+    <script type="text/javascript" >
+        alert("hi");
+        Ext.ns("Ext.Srini"); //Defining a namespace is best practice in ExtJS
+    alert("after");
+        Ext.onReady(function(){ //This is a execution point
+            alert("hi1");
+            var srinipanel = new Ext.create('Ext.Srini.srinipanel', {   //This is to create our custom panel
+                    renderTo: 'gridSpace',
+                    title : 'All Accounts'
+                });
+     
+            myExtjs1.getAllAccounts(function(result, er){ //This method is used to call our controller method
+                      alert("hi2");   
+                      alert(result);              
+                var res = Ext.decode(result);
+                alert(res.name)
+                                        store.loadData(res.Records);
+                                    }, {escape:false});
+        });
+         
+        Ext.define('AccountModel', { //Defining a model, which is like an object
+            extend  : 'Ext.data.Model',
+            fields  : [
+                        {name: 'Id', type: 'string'},
+                        {name: 'Name', type: 'string'},
+                        {name: 'Phone', type: 'string'},
+                        {name: 'Type', type: 'string'}
+                      ]
+        });
+         
+        var store = Ext.create('Ext.data.Store', { //Create a store, which is like collection of records with sorting and grouping capability
+                            model       : 'AccountModel', //Associate your store with Model
+                            proxy       : {
+                                            type    : 'memory',
+                                            reader  : {
+                                                type : 'json',
+                                            }
+                                          }
+                        });
+         
+        Ext.define('Ext.Srini.srinipanel', { //Defining a panel in order to display our data
+            extend      : 'Ext.grid.Panel',
+            alias       : 'widget.srinipanel',
+            name        : 'srinipanel',
+            columnLines : true,
+            autoScroll  : true,
+            singleSelect: true,
+            selType     : 'cellmodel',
+            border      : true,
+            height      : 1000,
+            width       : 1000,
+            store       : store, //Associate with our store
+            columns     : [ //Define the required columns
+                            {
+                                text        : 'Id',
+                                dataIndex   : 'Id',
+                                flex        : 0.5
+                            },
+                            {
+                                text        : 'Account Name',
+                                dataIndex   : 'Name',
+                                flex        : 0.5
+                            },
+                            {
+                                text        : 'Account Type',
+                                dataIndex   : 'Type',
+                                flex        : 0.5
+                            },
+                            {
+                                text        : 'Phone',
+                                dataIndex   : 'Phone',
+                                flex        : 0.5
+                            }
+                        ],
+        });
+    </script>
+</apex:page>

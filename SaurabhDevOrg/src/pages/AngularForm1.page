@@ -1,0 +1,440 @@
+<apex:page standardStyleSheets="false" sidebar="false"  standardController="Account" extensions="AngularForm1Controller" showHeader="false" docType="html-5.0" >
+<html xmlns:ng ="http://angularjs.org" ng-app ="formOperation" lang = "en">
+
+<!--including angularjs library in visualforcepage-->
+     <head>
+        <meta charset="utf-8"/>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet"/>
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"/>
+          <apex:includeScript value="{!$Resource.AngularJs}"/>
+          <apex:includeScript value="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"/>
+         <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog.css')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/js/ngDialog.js')}"/>
+          <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog-theme-default.css')}"/>
+         <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog-theme-plain.css')}"/>
+        <style>
+            .input-mysize { width: 550px }
+            .search-query {
+            padding-left: 469px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ5JREFUeNpi+P//PwMQMANxERCfAeI/UBrEZwbJQ9WAFR0A4u1AbAnEbFB6O1ScGaawGoi3wHQiYyBYDZKHKbwHxLo4FOqC5GEKf4Ksw6EQ5IyfIDYTkPEUiNUZsAOQ+F9GRkYJEKcFiDficSOIcRjE4QTiY0C8DuRbqAJLKP8/FP9kQArHUiA+jySJjA8w4LAS5KZd0MAHhaccQIABALsMiBZy4YLtAAAAAElFTkSuQmCC);
+            background-repeat: no-repeat;
+            background-position: 562px 8px;
+            }
+            
+                
+         </style>
+     </head>
+
+
+ <script type="text/javascript">
+
+     var myapp = angular.module('formOperation', ['ui.bootstrap','ngDialog']);
+     var tabcontroller = myapp.controller('TabController',['$scope',function($scope){
+        $scope.tab= 1;
+      $scope.setTab = function(newValue){
+      $scope.tab = newValue;
+    };
+
+    $scope.isSet = function(tabName){
+      return  $scope.tab === tabName;
+    };
+     
+     }]);
+
+     var mycontroller = myapp.controller('FormController',['$scope',function($scope){
+     $scope.master ={};
+    
+     $scope.user = {!Accountjson};
+    
+     $scope.update = function(user)
+     {
+     $scope.master = angular.copy(user);
+     if(user.name)
+     saveMethod(JSON.stringify($scope.user));
+     else
+     alert("name is required");
+     }
+     $scope.reset = function(form)
+     {
+     
+      if(form)
+      {
+      
+        
+      $scope.user = angular.copy($scope.master);
+        
+      }
+       
+       
+        };
+   
+    }]);
+    
+    
+        var sortingOrder = 'name';
+        <!-- Define Controller  -->
+        var contrl=myapp.controller('ctrlRead', function ($scope, $filter) {
+                <!--- Initialize Scope Variables --->
+                $scope.sortingOrder = sortingOrder;
+                $scope.reverse = false;
+                $scope.filteredItems = [];
+                $scope.groupedItems = [];
+                $scope.itemsPerPage = 10;
+                $scope.pagedItems = [];
+                $scope.currentPage = 0;
+                $scope.items ={!lstAccount};
+                
+                var searchMatch = function (haystack, needle) {
+                    if (!needle) {
+                        return true;
+                    }
+                    return haystack.toLowerCase().indexOf(needle.toLowerCase()) !== -1;
+                };
+                
+                //Initialize the Search Filters 
+                $scope.search = function () {
+                    $scope.filteredItems = $filter('filter')($scope.items, function (item) {
+                        for (var attr in item) {
+                            if (searchMatch(item[attr], $scope.query))
+                                return true;
+                        }
+                        return false; 
+                    });
+                    // Define Sorting Order
+                    if ($scope.sortingOrder !== '') {
+                        $scope.filteredItems = $filter('orderBy')($scope.filteredItems, $scope.sortingOrder, $scope.reverse);
+                    }
+                    $scope.currentPage = 0;
+                    
+                    // Group by pages
+                    $scope.groupToPages();
+                };
+                
+                // Calculate Total Number of Pages based on Records Queried 
+                $scope.groupToPages = function () {
+                    $scope.pagedItems = [];
+                    for (var i = 0; i < $scope.filteredItems.length; i++) {
+                        if (i % $scope.itemsPerPage === 0) {
+                            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [$scope.filteredItems[i]];
+                        } else {
+                            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)].push($scope.filteredItems[i]);
+                        }
+                    }
+                };
+                
+                $scope.range = function (start, end) {
+                    var ret = [];
+                    if (!end) {
+                        end = start;
+                        start = 0;
+                    }
+                    for (var i = start; i < end; i++) {
+                        ret.push(i);
+                    }
+                    return ret;
+                };
+                
+                $scope.prevPage = function () {
+                    if ($scope.currentPage > 0) {
+                        $scope.currentPage--;
+                    }
+                };
+                
+                $scope.nextPage = function () {
+                    if ($scope.currentPage < $scope.pagedItems.length - 1) {
+                        $scope.currentPage++;
+                    }
+                };
+                $scope.setPage = function () {
+                    $scope.currentPage = this.n;
+                };
+                // functions have been describe process the data for display
+                $scope.search();
+                
+                // change sorting order
+                $scope.sort_by = function (newSortingOrder) {
+                    if ($scope.sortingOrder == newSortingOrder)
+                        $scope.reverse = !$scope.reverse;
+                    $scope.sortingOrder = newSortingOrder;
+                    
+                    // icon setup
+                    $('th i').each(function () {
+                        // icon reset
+                        $(this).removeClass().addClass('icon-sort');
+                    });
+                    if ($scope.reverse)
+                        $('th.' + new_sorting_order + ' i').removeClass().addClass('icon-chevron-up');
+                    else
+                        $('th.' + new_sorting_order + ' i').removeClass().addClass('icon-chevron-down');
+                };
+                
+            });
+        
+        contrl.$inject = ['$scope', '$filter'];
+    
+ 
+          
+          
+          
+          
+          myapp.controller('OtherOptionController', ['$scope', 'ngDialog',function($scope,ngDialog){
+          
+           $scope.option = 0;
+           $scope.showmodel = 'saurabh';
+           $scope.isSetOption= function(opt)
+           {
+           return $scope.option === opt;
+           };
+           $scope.setOption= function(opt)
+           {
+            $scope.option = opt;
+           };
+           $scope.toggelShowModel = function()
+           {
+		           ngDialog.open({
+					    template: 'templateId',
+					    className: 'ngdialog-theme-default',
+					    controller: 'StudentOperationController'
+					    
+					    
+					});
+            
+           };
+           
+           
+          
+          
+          }]);
+          
+           /*  myapp.directive('modal', function () {
+					    return {
+					      template: '<div class="modal fade">' + 
+					          '<div class="modal-dialog">' + 
+					            '<div class="modal-content">' + 
+					              '<div class="modal-header">' + 
+					                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
+					                '<h4 class="modal-title">{{ title }}</h4>' + 
+					              '</div>' + 
+					              '<div class="modal-body" ng-transclude></div>' + 
+					            '</div>' + 
+					          '</div>' + 
+					        '</div>',
+					      restrict: 'E',
+					      transclude: true,
+					      replace:true,
+					      scope:true,
+					      link: function postLink(scope, element, attrs) {
+					        scope.title = attrs.title;
+					
+					        scope.$watch(attrs.visible, function(value){
+					          if(value == true)
+					            (element).modal('show');
+					          else
+					            (element).modal('hide');
+					        });
+					
+					        
+					      }
+										      
+					    };
+                   }); 
+                        */
+         
+         myapp.controller('StudentOperationController', ['$scope', function($scope){
+        
+          $scope.name ="saurabh";
+         $scope.checkInput = function()
+           {
+           alert($scope.name);
+           };
+          $scope.student = [];
+          
+          $scope.savestudent = function(){
+          $scope.print = "";
+          
+           AngularForm1Controller.saveStudent($scope.student.name, function(result, event){
+           
+           $scope.print = result;
+           alert(result);
+           
+           });
+          
+          };
+          }]);
+          
+ 
+
+  </script>
+  
+  <script type="text/ng-template" id="templateId">
+<div>
+    <h2>Enter Name of Student</h2>
+     <input type="text" ng-model="name"/>
+     <input type="button" value="OK" ng-click="checkInput()"/>
+    <p>Content goes here</p>
+</div>
+</script>
+        <body ng-app="formOperation">
+        
+        <center>
+        <div ng-controller="TabController">
+        
+        
+        <section class="tab" >
+        <ul class="nav nav-pills">
+          <li ng-class="{ active: isSet(1) }">
+            <a   ng-click="setTab(1)">New Account</a></li>
+          <li ng-class="{ active: isSet(2) }">
+            <a  ng-click="setTab(2)">All Accounts</a></li>
+          <li ng-class="{ active: isSet(3) }">
+            <a  ng-click="setTab(3)">More Option</a></li>
+        </ul>
+        
+      </section>
+        
+        <div ng-show="isSet(1)" ng-controller="FormController">
+            <form name="form"> 
+            
+        
+        
+                    NEW ACCOUNT CREATION
+                    <br/>
+                    <table border="2"> <tr><td>
+                    Name: </td><td><input type="text" ng-model="user.name" name="uname" required="true"/>
+                    
+                    <span ng-show="form.uname.$error.required"> * </span>
+                    
+                    </td></tr>
+                    
+                    <tr><td>
+                    Phone Number: </td><td> <input type="text" ng-model ="user.phone" name="unumber" required="true"/>
+                    <div ng-show="form.$submitted || form.unumber.$touched">
+                    <span ng-show="form.unumber.$error.required">input your mobile no</span>
+      
+                     </div>
+                    </td></tr>
+                    </table>
+                    <br/>
+                     <input type="checkbox" ng-model="verify.agree" name="userAgree" required="" />
+                    I agree:
+                    
+                    
+                    <br />
+                  
+                
+                    <input type="button" ng-click="reset(form)" value="Reset" />
+                    <input ng-disabled="!verify.agree" type="submit" ng-click="update(user)" value="Save" />
+             
+            </form>
+            </div>
+            
+            
+            
+            <!--showing all account -->
+            <div ng-show="isSet(2)" ng-controller="ctrlRead">
+            
+            <div class="navbar">
+                    <div class="navbar-inner">
+                        <a class="brand" href=" ">showing all account</a>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="input-append" style="width:800px; margin:0 auto;">
+                    <input type="text" ng-model="query" ng-change="search()" class="input-mysize  search-query" placeholder="Search"/>
+                </div>
+               
+
+                <table class="table  table-hover">
+                    <thead>
+                        <tr>
+                            <th class="id">Id&nbsp;<a ng-click="sort_by('id')"><i class="icon-sort"></i></a></th>
+                            <th class="name">Name&nbsp;<a ng-click="sort_by('name')"><i class="icon-sort"></i></a></th>
+                            <th class="Phone">Phone&nbsp;<a ng-click="sort_by('Phone')"><i class="icon-sort"></i></a></th>
+                            
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <td colspan="6">
+                            <div class="pagination pagination-large pull-left">
+                                <ul>
+                                    <li ng-class="{disabled: currentPage == 0}">
+                                        <a ng-click="prevPage()">� Prev</a>
+                                    </li>
+                                    <li ng-repeat="n in range(pagedItems.length)"
+                                    ng-class="{active: n == currentPage}"
+                                    ng-click="setPage()">
+                                        <a ng-bind="n + 1">1</a>
+                                    </li>
+                                    <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
+                                        <a ng-click="nextPage()">Next �</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tfoot>
+                    <tbody>
+                        <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
+                            <td>{{item.id}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.Phone}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+            
+            </div>
+         
+       
+        
+        <div ng-show="isSet(3)">
+         <section ng-controller="OtherOptionController" >
+         <div class="row">
+        
+         <ul class="nav nav-tabs nav-stacked nav-pills" role="tablist">
+        <li ng-class="{ active: isSetOption(1)}">
+            <a class="btn-lg" ng-click="setOption(1)" href="">My Tab 1</a>
+        </li>
+        <div ng-show ="isSetOption(1)" ng-controller="StudentOperationController">
+          <table ><tr><td>
+          Student Name:</td><td> <input type="text" ng-model="student.name" /></td></tr><tr><td>
+          Dob: </td><td>
+         <input type ="date" ng-model =  "student.dob"/></td></tr>
+         </table>
+         <button ng-click="savestudent()" >save</button>
+          <h1>{{print}}</h1>
+        </div>
+       
+        <li ng-class="{ active: isSetOption(2)}">
+            <a class="btn-lg" ng-click="setOption(2); toggelShowModel()" href="">My Tab 2</a>
+        </li>
+       
+         </ul>
+
+         
+        
+         </div>
+         
+         </section>
+        
+        </div>
+        </div>
+        
+        
+        </center>
+        
+        
+        </body>
+</html>
+<apex:form >
+
+<apex:actionFunction name="saveMethod" action="{!save}" oncomplete="location.reload();">
+
+    <apex:param assignTo="{!accountJson}" name="accountJson" value="x"/>
+
+</apex:actionFunction>
+
+</apex:form>
+
+</apex:page>

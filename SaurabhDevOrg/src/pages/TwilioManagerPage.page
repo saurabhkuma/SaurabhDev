@@ -1,0 +1,18 @@
+<apex:page controller="TwilloManager" >
+    <apex:form id="form">
+       <apex:outputPanel id="pagemsg">
+        <apex:pageMessages /></apex:outputPanel>
+        <apex:actionFunction id="acfunc" name="msgSend" action="{!sendSms}" reRender="pagemsg" >
+            
+        </apex:actionFunction>
+     <apex:pageBlock id="blc">
+        Enter Mobile No:<apex:inputText id="phone" value="{!tophone}"/><br/>
+        
+        Enter Message : <apex:inputText value="{!message}"  id="msg"/>
+        <apex:pageBlockButtons >
+        <apex:commandButton id="cmdbutton" onclick="msgSend();" value="sendsms"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>
+    
+</apex:page>

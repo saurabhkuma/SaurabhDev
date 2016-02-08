@@ -1,0 +1,28 @@
+<apex:page sidebar="false"  showHeader="false" controller="menucontroller" >
+  <!--java script below-->
+  <script input="text/javascript">
+  function func1()
+  { alert("func11");
+  call();
+  alert("func1");
+  }
+  </script>
+<marquee>  <h1>travel booking home page</h1></marquee>
+<apex:form >
+<apex:actionFunction name="call" action="{!save}" reRender="blck" />
+<apex:pageBlock id="blck">
+<apex:pageblockButtons >
+<apex:commandButton value="search booking" action="https://c.ap1.visual.force.com/apex/search1"/>
+<apex:commandButton value="new booking"  action="https://ap1.salesforce.com/a03/e?retURL=%2Fa03%2Fo"/>
+<apex:commandButton value="save it" onclick="func1();"/>
+<apex:outputText value="{!name}" id="blck1"></apex:outputText>
+</apex:pageBlockButtons>
+
+
+</apex:pageBlock>
+
+
+</apex:form>
+  
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

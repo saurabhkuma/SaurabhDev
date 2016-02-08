@@ -1,0 +1,42 @@
+<apex:page controller="RestOperation1" >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>welcome to  saurabh work bench</h1>
+   <apex:form >
+  
+  
+  <apex:selectList value="{!accselected}" multiselect="false" size="1">
+  <apex:selectOptions value="{!accountlist}">
+  </apex:selectOptions>
+  </apex:selectList>
+  <apex:commandButton action="{!search}" value="search"/>
+  
+  <apex:pageBlock >
+ 
+  <apex:pageBlockTable value="{!selectedAccount}" var="acc">
+   <apex:column headerValue="ACCOUNT NAME" >
+   <apex:inputField value="{!acc.name}"/>
+   </apex:column>
+   <apex:column headerValue=" PHONE" >
+   <apex:inputField value="{!acc.phone}"/>
+   </apex:column>
+   <apex:column headerValue="INDUSTRY" >
+   <apex:inputField value="{!acc.Industry}"/>
+   </apex:column>
+   <apex:column headerValue="ACCOUNT NUMBER" >
+   <apex:inputField value="{!acc.AccountNumber}"/>
+   </apex:column>
+    
+  </apex:pageBlockTable>
+  
+  
+  
+
+  
+  
+  
+  </apex:pageBlock>
+    </apex:form>
+  
+  
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

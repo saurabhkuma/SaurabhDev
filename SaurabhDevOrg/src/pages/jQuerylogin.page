@@ -1,0 +1,56 @@
+<apex:page docType="html-5.0" id="page" controller="jlogincontroller1" >    
+
+
+<script  type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"> </script>
+
+<script type="text/javascript">
+
+
+
+j$ = jQuery.noConflict();
+alert("hello");
+
+<!--
+jQuery(document).ready(function(){
+jQuery("button").click(function(){
+alert("hi");
+
+ var res=jQuery.ajax({
+type:"POST",
+url:"https://ap1.salesforce.com/services/oauth2/token",
+
+dataType: "text/xml",
+data: {grant_type:"password",client_id:"3MVG9Y6d_Btp4xp6RX51A7FqyrJxTzlYwm7tg9GYq93TkUF2rXM9UFL_g1KKfMmQEwotHuuw.ynRf3FWumfXE",client_secret:"2452598771328708177",username:"rishuom@sales.com",password:"saurabh024cE41krFw1xvfIxlZIHQ4kYzWM" },
+
+success: function(response)
+{
+alert(response);
+},
+
+error: function(error)
+{
+console.log(error);
+alert(error);
+}
+     });
+     
+     
+});});
+
+-->
+</script>
+<apex:form >
+
+
+</apex:form>
+username:<input type="text" id="user"/><br/><br/>
+password:<input type="text" id="pass"/><br/>
+<button>login</button>
+<script>
+var acctoken= "{!token}";
+var page= "{!page}";
+console.log(acctoken);
+</script>
+
+
+</apex:page>

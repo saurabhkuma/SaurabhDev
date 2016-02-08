@@ -1,0 +1,140 @@
+<apex:page controller="ShowAttachmentImage"  showHeader="false" id="page" >
+<script>
+function show()
+{
+var selectedid= document.getElementById('{!$Component.page:form:pgblc2:selid}').value;
+var selecteddoc= document.getElementById('{!$Component.page:form:pgblc2:seldoc}').value;
+alert("hi selected id and selected doc is " +selectedid+ "  "+selecteddoc);
+
+}
+</script>
+
+<apex:form id="form" enctype="multipart/form-data">
+
+<marquee> atachment images</marquee>
+<apex:pageBlock title="IMAGES">
+<table><tr>
+<apex:repeat value="{!AllImage}" var="oneimage">
+<td>{!oneimage.imagename}</td><td>
+<apex:image url="{!oneimage.imageUrl}" height="100" width="100"/></td>
+
+</apex:repeat></tr>
+</table>
+</apex:pageBlock>
+
+<apex:pageMessages />
+<apex:pageBlock title="sending email" id="pgblc2">
+<apex:pageblockSection columns="1">
+
+<apex:outputLabel value="select email id"></apex:outputLabel> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:selectList value="{!selectedid}" size="1" id="selid">
+<apex:selectoption itemValue="saurabh0801229024@gmail.com" itemLabel="saurabh0"></apex:selectoption>
+<apex:selectoption itemValue="saurabh0801229024@gmail.com" itemLabel="saurabh1"></apex:selectoption>
+<apex:selectoption itemValue="saurabh0801229024@gmail.com" itemLabel="saurabh2"></apex:selectoption>
+<apex:selectoption itemValue="ch30aparna@gmail.com" itemLabel="aparna"></apex:selectoption>
+<apex:selectoption itemValue="saurabhkuma@cybage.com" itemLabel="cybage"></apex:selectoption>
+
+</apex:selectList>
+
+
+<apex:outputLabel value="select document to add"></apex:outputLabel> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:selectList value="{!selectedDocId}" multiselect="true" size="3" id="seldoc" >
+<apex:selectOptions value="{!allOption}"></apex:selectOptions>
+</apex:selectList>
+
+
+
+<apex:pageblockSectionItem >
+<apex:outputLabel value="select attahcment" for="attachment"/>
+<apex:inputFile value="{!emailattachment.body}" filename="{!emailattachment.filename}" contentType="{!emailattachment.contentType}" id="attachment"/>
+
+</apex:pageblockSectionItem>
+
+
+
+
+
+
+
+</apex:pageblockSection>
+
+          
+        
+
+<apex:pageBlockButtons id="pgbutton" >
+<apex:commandButton id="button1" action="{!sendMail}" onclick="show();" value="send" title="send"/>
+</apex:pageBlockButtons>
+</apex:pageBlock>
+
+
+</apex:form>
+
+
+
+  <apex:form enctype="multipart/form-data">
+
+    <apex:pageMessages />
+
+    <apex:pageBlock title="Upload a File">
+
+      <apex:pageBlockButtons >
+
+        <apex:commandButton action="{!upload}" value="Save"/>
+
+      </apex:pageBlockButtons>
+
+  
+
+      <apex:pageBlockSection showHeader="false" columns="2" id="block1">
+
+  
+        <apex:pageBlockSectionItem >
+
+          <apex:outputLabel value="File Name" for="fileName"/>
+
+          <apex:inputText value="{!document.name}" id="fileName"/>
+
+        </apex:pageBlockSectionItem>
+
+  
+
+        <apex:pageBlockSectionItem >
+
+          <apex:outputLabel value="File" for="file"/>
+
+          <apex:inputFile value="{!document.body}" filename="{!document.name}" id="file"/>
+
+        </apex:pageBlockSectionItem>
+
+  
+
+        <apex:pageBlockSectionItem >
+
+          <apex:outputLabel value="Description" for="description"/>
+
+          <apex:inputTextarea value="{!document.description}" id="description"/>
+
+        </apex:pageBlockSectionItem>
+
+  
+
+        <apex:pageBlockSectionItem >
+
+          <apex:outputLabel value="Keywords" for="keywords"/>
+
+          <apex:inputText value="{!document.keywords}" id="keywords"/>
+
+        </apex:pageBlockSectionItem>
+
+  
+
+      </apex:pageBlockSection>
+
+  
+
+    </apex:pageBlock>
+
+  </apex:form>
+
+
+ </apex:page>

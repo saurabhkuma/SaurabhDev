@@ -1,0 +1,22 @@
+<apex:page showHeader="false"  standardController="Currency__c" recordSetVar="curr"  extensions="changevalue" >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page: currency
+
+  <apex:form >
+  <apex:pageBlock title="currency rates">
+  <apex:pageBlockTable value="{!curr}" var="c">
+  <apex:column value="{!c.name}"/>
+  <apex:column >
+  <apex:outputfield value="{!c.Conversion_Rate__c}">
+<apex:inlineEditSupport event="ondblclick"  showOnEdit="update"/>
+</apex:outputfield>
+  </apex:column>
+  <apex:column value="{!c.c_Currency_code__c}"/>
+  
+  </apex:pageBlockTable>
+  <h1>effective date</h1><apex:inputfield value="{!Currency__c.d_Effective_date__c}"/>
+  </apex:pageBlock>
+  <apex:commandButton action="{!quicksave}" id="update" value="save"/>
+  </apex:form>
+</apex:page>

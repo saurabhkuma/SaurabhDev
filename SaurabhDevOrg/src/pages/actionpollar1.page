@@ -1,0 +1,13 @@
+<apex:page controller="actionpollarcontroller" >
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>time of system:-----------</h1> 
+  hi below time is changing every 5 sec.
+  <!-- End Default Content REMOVE THIS -->
+  <apex:form >
+  <apex:pageBlock id="blck">
+  <apex:actionPoller action="{!changetime}" reRender="blck" interval="5"/>
+  hi current time is :: {!currenttime}
+  
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

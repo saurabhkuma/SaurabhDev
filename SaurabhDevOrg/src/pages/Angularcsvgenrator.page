@@ -1,0 +1,175 @@
+<apex:page sidebar="false" controller="CsvGenratorController" showHeader="false" docType="html-5.0"  standardStylesheets="false">
+  <html xmlns:ng ="http://angularjs.org" ng-app ="csvgenrator" lang = "en">
+
+<!--including angularjs library in visualforcepage-->
+     <head>
+        <meta charset="utf-8"/>
+
+          <apex:includeScript value="{!$Resource.AngularJs}"/>
+          
+          <apex:includeScript value="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"/>
+         <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet"/>
+         <link href="https://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css" rel="stylesheet"/>
+          <apex:includeScript value="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"/>
+          <apex:includeScript value="{!URLFOR($Resource.AngularDropdown, 'angular-multi-select-master/angular-multi-select.js')}"/>
+         <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog.css')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/js/ngDialog.js')}"/>
+         <apex:stylesheet value="{!URLFOR($Resource.AngularDropdown, 'angular-multi-select-master/angular-multi-select.css')}"/>
+          <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog-theme-default.css')}"/>
+         <apex:stylesheet value="{!URLFOR($Resource.ngDialogMaster, 'ngDialog-master/css/ngDialog-theme-plain.css')}"/>
+        <style>
+            .input-mysize { width: 550px }
+            .search-query {
+            padding-left: 469px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ5JREFUeNpi+P//PwMQMANxERCfAeI/UBrEZwbJQ9WAFR0A4u1AbAnEbFB6O1ScGaawGoi3wHQiYyBYDZKHKbwHxLo4FOqC5GEKf4Ksw6EQ5IyfIDYTkPEUiNUZsAOQ+F9GRkYJEKcFiDficSOIcRjE4QTiY0C8DuRbqAJLKP8/FP9kQArHUiA+jySJjA8w4LAS5KZd0MAHhaccQIABALsMiBZy4YLtAAAAAElFTkSuQmCC);
+            background-repeat: no-repeat;
+            background-position: 562px 8px;
+            } 
+         </style>
+     </head>
+    
+          <script type="text/javascript">
+          var myapp = angular.module('csvgenrator', ['ui.bootstrap','ngDialog','multi-select']);
+          
+       
+          
+             controller1 = myapp.controller('DropdownController', ['$scope', 'ngDialog','$rootScope',function($scope,ngDialog,$rootScope){
+          // function DropdownController($scope,ngDialog,$rootScope){
+                      $rootScope.selectedvalue = 'Account';
+		              /*$scope.visible = 2;
+		              $scope.setVisible = function(value)
+		              {
+		               $scope.visible = value;
+		              }; 
+		              
+		              $scope.IsVisible = function(value)
+		              {
+		              return   $scope.visible === value;
+		              };*/
+		           
+		            
+		            $scope.sobjects =[];
+		            $scope.selectedsObject = null;
+		            //retrieving all sobjects from org
+		            
+		             CsvGenratorController.getAllSobjects(function(result, event){   
+		             res = angular.fromJson(result);
+		             $scope.sobjects = res.Records;
+		          
+		               } , {escape:false}); 
+		               
+		              //function call when a sobject is selected 
+		               $scope.showSelected = function(){
+		               
+		               $rootScope.selectedvalue = $scope.selectedsObject;
+		              /* angular.forEach ($scope.selectedsObject, function( value, key ) {
+		         
+		                $rootScope.selectedvalue = ''+ value.value;
+		                alert($scope.selectedsObject);
+		                alert($rootScope.selectedvalue);
+		                 
+		                 
+		              });*/
+		           
+		           }; 
+		           
+		            $scope.toggelShowModel = function()
+		            {
+		            
+		              
+		                   ngDialog.open({
+		                        template:  'templateId',
+		                        className: 'ngdialog-theme-default',
+		                        controller: 'SobjectOperation'
+		                        
+		                        
+		                    });
+		            
+		              };
+		           //}
+		               }]);
+		     
+          
+          
+          controller2 = myapp.controller('SobjectOperation', ['$scope','$rootScope', function($scope,$rootScope){
+        
+		    //function SobjectOperation($scope,$rootScope){       
+		            
+		            
+		            $scope.test = $rootScope.selectedvalue;
+		            $scope.fields =[];
+		            $scope.selectedfields =[];
+		            $scope.selectedfieldsvalue =["Id"];
+		            
+		            
+		            if($rootScope.selectedvalue!='' && $rootScope.selectedvalue!= undefined){
+		            //alert($rootScope.selectedvalue);
+		            CsvGenratorController.getAllFields($rootScope.selectedvalue , function(result, event){
+		             
+		              //alert(result);
+		               
+		              res = angular.fromJson(result);
+		                  $scope.fields = res.Records;
+		          
+		                } , {escape:false});
+		                } 
+		             
+		             $scope.retrieveRecords = function()
+		            {
+		            
+		                 $scope.selectedfieldsvalue= [];
+		                alert("in retrieve records");
+		                 angular.forEach($scope.selectedfields , function(value, key){
+		                  
+		                    $scope.selectedfieldsvalue.push(""+value.value+"");
+		                  
+		                  
+		                  });
+		                  
+		                  
+		            
+		               CsvGenratorController.getAllRecords($scope.selectedfieldsvalue,$rootScope.selectedvalue,function(result,event){
+		               
+		                alert(result);
+		               } ,{escape: false});
+		                
+		            
+		            } ;
+		                 
+		           // }
+		          
+		           }]);
+          
+          
+     
+     </script>
+     
+      <script type="text/ng-template" id="templateId">
+ <div>
+   select fields:
+    <div multi-select input-model="fields"  output-model ="selectedfields" button-label="value" item-label="value" tick-property="" max-labels= "4" orientation="horizontal"  >
+          </div>
+    <input type="button" ng-click ="retrieveRecords()" value="Find"/>
+     
+</div>
+</script>
+     
+      <body ng-app="csvgenrator">
+      
+      <center>
+       <div ng-controller ="DropdownController">
+       
+       
+     Select Sobject ::  <select ng-options="opt as opt for opt in sobjects" ng-model="selectedsObject" >
+       </select>
+       <input type="button" ng-click="showSelected(); toggelShowModel()" value="SelectFields"/>
+       
+       
+      </div>
+      </center>
+       
+     
+     </body>
+
+</html>
+</apex:page>

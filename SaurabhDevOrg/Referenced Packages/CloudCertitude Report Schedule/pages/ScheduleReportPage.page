@@ -1,0 +1,246 @@
+<apex:page controller="CC_RptSchd.ScheduleReportController" sidebar="false" >
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"> </script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="{!URLFOR($Resource.DataTable,'DataTable/jquery-1.10.2.min.js')}"></script>
+
+<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.datetimepicker,'/datetimepicker/jquery.datetimepicker.css')}"/ >
+<script src="{!URLFOR($Resource.datetimepicker,'datetimepicker/jquery.js')}"></script>
+<script src="{!URLFOR($Resource.datetimepicker,'datetimepicker/jquery.datetimepicker.js')}"></script>
+
+<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.DataTable,'/DataTable/jquery.dataTables.css')}"/ >
+<script src="{!URLFOR($Resource.DataTable,'DataTable/jquery.dataTables.js')}"></script>
+
+<apex:sectionHeader title="Report" subtitle="Schedule Report Export"/>
+  
+    <script>
+       window.onload = function(){
+           $('input[type=text]').blur();
+           $('[id$=objectLst]').focus();
+       };
+      
+        var flg = 'true';
+        $(function() {
+            $('#example').dataTable({
+                //"scrollY": "200px",
+               // "scrollX": true
+            });
+            $( "#datetimepicker1" ).datetimepicker({
+                timepicker:false,
+                format:'m/d/Y'
+            });
+            $( "#datetimepicker2" ).datetimepicker({
+                timepicker:false,
+                format:'m/d/Y'
+            });
+            $("tr.table").click(function() {
+                var tableData = $(this).children("td").map(function() {
+                    return $(this).text();
+                }).get();
+                if(flg == 'true'){
+                    $(this).css('background-color', "#D6D5C3");
+                    flg == 'false';
+                }else if(flg == 'false'){
+                    $(this).css('background-color', "red");
+                    flg == 'true';    
+                }
+                actReportId($.trim(tableData[0]),$.trim(tableData[1]));
+            });
+            //$("#datetimepicker1").val(new Date());
+            //$("#datetimepicker2").val(new Date());
+        });
+        
+        function showDates(){
+            var st = $("#datetimepicker1").val();
+            var ed = $("#datetimepicker2").val();
+            actFun(st,ed);
+        }
+        function emptyDateFields(){
+            $("#datetimepicker1").val('');
+            $("#datetimepicker2").val('');
+        }
+        
+    </script>
+    <apex:form >
+   <apex:actionStatus id="status">
+            <apex:facet name="start">
+                <div style="width: 500px;">
+                    <img src="/img/loading24.gif" style="vertical-align:middle;margin-left:50px;"/>
+                    <span style="margin-left:10px; font-size: 12px; font-weight: bold; color: #000000;">Please wait...</span>
+                </div>
+            </apex:facet>
+    </apex:actionStatus>
+    <apex:outputPanel id="outMsg">
+       <apex:pageMessages ></apex:pageMessages>
+   </apex:outputPanel>
+   <apex:actionFunction name="actReportId" action="{!settingRptId}" reRender="outRpt">
+       <apex:param name="p1" assignTo="{!rptId}" value=""/>
+       <apex:param name="p2" assignTo="{!rptName}" value=""/>
+   </apex:actionFunction> 
+    <apex:actionFunction name="actFun" action="{!saveSchedule}" reRender="outPan,outMsg,outList" status="status" >
+        <apex:param name="p1" assignTo="{!startDate}" value=""/>
+        <apex:param name="p2" assignTo="{!endDate}" value=""/>
+    </apex:actionFunction>
+     
+        <!--  <table border="0" width="100%" rules="groups" class="list">
+            <tr class="headerRow">
+                <th class="headerRow"> Schedule Days </th>
+                <td class="dataCell">
+                    <apex:repeat value="{!dayList}" var="ls">
+                        <apex:inputCheckbox value="{!ls.isSelected}" /> {!ls.weekday}<br/>
+                    </apex:repeat>
+                    </td>
+                <td class="dataCell">
+                    <table width="100%"  cellspacing="10" cellpadding="10" class="list">
+                        <tr>
+                            <th class="headerRow"> Start Date</th>
+                            <td class="dataCell"> <input type="text" id="datetimepicker1"/></td>
+                        </tr>
+                        <tr class="headerRow">
+                            <th class="headerRow"> End Date</th>
+                            <td class="dataCell"><input type="text" id="datetimepicker2"/></td>
+                        </tr>
+                    </table>
+                </td>
+                
+            </tr>
+        </table>  --> 
+        <!-- <table width="100%"  cellspacing="10" cellpadding="10" class="list" >
+            <tr align="center" class="headerRow">
+                <th class="headerRow"> Start Date</th>
+                <td class="dataCell"> <input type="text" id="datetimepicker1"/></td>
+                <th class="headerRow"> End Date</th>
+                <td class="dataCell"><input type="text" id="datetimepicker2"/></td>
+            </tr>
+            
+        </table> 
+        
+        <hr/> -->
+        <apex:outputPanel id="outList"> 
+        <table border="0" width="100%" rules="cols" cellpadding="10" class="list">
+            <tr>
+            <td class="dataCell" >
+                <table class="list" cellpadding="10" width="100%"> 
+                    <tr class="headerRow">
+                        <th class="headerRow"> Frequency </th>
+                        <td class="dataCell"> <input type="radio" checked="true"/> Daily</td>
+                    </tr>
+                    <tr class="headerRow">
+                        <th class="headerRow"> Attachment Type </th>
+                        <td class="dataCell"> <input type="radio" checked="true"/> CSV</td>
+                    </tr>
+                    <tr class="headerRow">
+                        <th class="headerRow"> Start Date </th>
+                        <td class="dataCell"> <apex:inputField value="{!tempSchObj.CC_RptSchd__StartDate__c}"/><!-- <input type="text" id="datetimepicker1"/> --> </td>
+                    </tr>
+                    <tr class="headerRow">
+                        <th class="headerRow" > End Date </th>
+                        <td class="dataCell"> <apex:inputField value="{!tempSchObj.CC_RptSchd__EndDate__c}"  /><!-- <input type="text" id="datetimepicker2"/> --> </td>
+                    </tr>
+                </table>
+            </td>
+             <td class="dataCell" >
+                  <!--  <table id="example" class="display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Report Id </th>
+                                <th>Report Name</th>
+                            </tr>
+                        </thead>
+                
+                        <tbody>
+                            <apex:repeat value="{!reportList}" var="ls"> 
+                            <tr class="table">
+                                <td>{!ls.id}</td>
+                                <td>{!ls.name}</td>
+                            </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table> -->
+                    <table width="100%">
+                        <tr class="headerRow"> <th class="headerRow" style="vertical-align:top;">
+                    Select Report to Schedule : </th>
+                    <td class="dataCell"><apex:selectList value="{!rptId}" size="10" multiselect="false" style="width:150px;">
+                        <apex:selectOptions value="{!lstReports}"></apex:selectOptions>
+                    </apex:selectList></td></tr>
+                    </table>
+             </td> 
+             <td align="center" class="dataCell">
+                 <c:MultiselectPicklist leftLabel="Available Users" leftOption="{!lstUsers}" rightLabel="Selected Users" rightOption="{!selectedUser}" size="10" width="150px"/>
+             </td> 
+             </tr>
+             <!-- <tr>
+                 <td colspan="2"> 
+                     <apex:outputPanel id="outRpt" style="font-size:12pt;font-weight:700;align:center;">
+                         Selected Report :  {!rptName}
+                     </apex:outputPanel>
+                 </td>
+             </tr> --> 
+        </table>
+        </apex:outputPanel>
+        <hr/>
+       
+        <table width="100%" rules="groups" border="0" cellpadding="10" class="list"> 
+            <!-- <tr class="headerRow">
+                <td align="right" class="dataCell"> Attachment Type &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td> 
+                <td class="dataCell">
+                    <apex:selectRadio value="{!selType}">
+                        <apex:selectOptions value="{!lstAttType}"></apex:selectOptions>
+                    </apex:selectRadio>
+                </td>
+            </tr> --> 
+            <tr class="headerRow">
+                <td colspan="2" align="center" class="dataCell"> 
+                    <apex:commandButton value="Save"  onclick="showDates();return false;"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:commandButton value="Cancel" action="{!cancelAction}"/></td>
+            </tr>
+        </table>
+        
+        <hr/><hr/>
+        <br/>
+        <apex:outputPanel id="outPan">
+        <center>
+        <table width="80%" class="list">
+            <!-- <tr>
+                <th colspan="5">Scheduled Report  List </th>
+            </tr> --> 
+            <tr class="headerRow">
+                <th class="headerRow">&nbsp;</th>
+                <!-- <th class="headerRow"> Schedule Days </th> --> 
+                <th class="headerRow"> 
+                     Start Date 
+                </th>
+                <th class="headerRow"> 
+                    End Date  
+                </th>
+                <!-- <th class="headerRow"> Attachment Type  </th> --> 
+                <th class="headerRow"> 
+                    Selected Report 
+                </th>
+                <th class="headerRow">
+                  Selected Users  
+                </th>
+            </tr> 
+            <apex:actionFunction name="actFill" action="{!fillScheduleModel}"  status="status"/>
+            <apex:repeat value="{!modelList}" var="ms">
+                <tr class="headerRow">
+                    
+                    <td class="dataCell"><apex:commandLink value="Del" action="{!removingScheduleRecord}" oncomplete="actFill();">
+                        <apex:param name="recId" assignTo="{!recId}" value="{!ms.recIndex}" />
+                    </apex:commandLink>  </td>
+                    <!-- <td class="dataCell"><apex:outputField value="{!ms.schObj.ScheduledDays__c}"/></td> --> 
+                    <td class="dataCell"><apex:outputField value="{!ms.schObj.CC_RptSchd__StartDate__c}"/></td>
+                    <td class="dataCell"><apex:outputField value="{!ms.schObj.CC_RptSchd__EndDate__c}"/></td>
+                    <!-- <td class="dataCell"><apex:outputLabel value="{!ms.schObj.atType__c}"/></td> -->
+                    <td class="dataCell"><apex:outputField value="{!ms.schObj.CC_RptSchd__Reports__c}"/></td>
+                    <td class="dataCell"><apex:outputField value="{!ms.schObj.CC_RptSchd__Users__c}"/></td>
+                </tr>
+            </apex:repeat>
+        </table>
+        </center>
+        </apex:outputPanel>
+        
+    </apex:form>
+    
+</apex:page>

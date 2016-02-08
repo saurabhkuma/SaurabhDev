@@ -1,0 +1,79 @@
+<apex:page >
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" />
+    <apex:includeScript value="{!$Resource.SFTK1}" />
+     <apex:includeScript value="{!$Resource.app}" />
+    
+
+
+
+
+<script>
+    
+
+        var loginUrl    = "https://login.salesforce.com/";
+        var clientId    = "3MVG9Y6d_Btp4xp6RX51A7FqyrJxTzlYwm7tg9GYq93TkUF2rXM9UFL_g1KKfMmQEwotHuuw.ynRf3FWumfXE";
+        var proxyUrl    =   "https://ap1.salesforce.com/";
+        var redirectUrl  = "https://library11-developer-edition.ap1.force.com/oauthresponse";
+        var client = new forcetk.Client(clientId, loginUrl,proxyUrl);
+      alert(window.location.hash);
+        
+        $j= jQuery.noConflict();
+       jQuery(document).ready(function(){
+     
+       jQuery("#login").click(function(){
+         alert("hi in q");
+       var url = loginUrl +'services/oauth2/authorize?display=popup'
+                + '&response_type=token&client_id=' + escape(clientId)
+                +'&redirect_uri='+ escape(redirectUrl);
+            window.open( url,'login',700,500);
+      
+          
+          
+       });
+      });
+      
+      
+      if (window.location.hash) {
+                     
+
+                  var oauthResponse = {};
+                var message = window.location.hash.substr(1);
+                var nvps = message.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = unescape(parts[1]);
+                  
+                }
+          if(oauthResponse.access_token)
+              {alert("before");
+                  client.setSessionToken(oauthResponse.access_token);
+               alert(oauthResponse.access_token);
+               
+               client.query("select Name from Account limit 1",function(response){
+                   jQuery("#message").html('The first account I see is '
+                          +response.records[0].Name);
+                    });
+                  }
+                
+          //oauthCallback(oauthResponse);
+          
+                }
+                
+                
+    /* function oauthCallback(response) {
+    if (response && response.access_token) {
+        client.setSessionToken(response.access_token, null, response.instance_url);
+        alert("in oauth");
+    } else {
+        alert("AuthenticationError: No Token");
+    }
+}*/
+
+
+                
+</script>
+<button id="login">login</button>
+    <div id="message">
+    </div>
+    
+</apex:page>
